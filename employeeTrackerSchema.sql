@@ -137,7 +137,7 @@ UPDATE employee set manager = 'Robert Rodrigez' WHERE manager_id =8;
 SELECT employee.id, employee.first_name, employee.last_name, employee.manager, 
 role.title, role.department, role.salary 
 FROM employee
-INNER JOIN role ON role.department_id = employee.role_id;
+INNER JOIN role ON role.id = employee.role_id;
 
 -- -- Left Join we want to see all authors whether or not .. 
 SELECT books.title, authors.firstName, authors.lastName 
