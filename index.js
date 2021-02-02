@@ -187,9 +187,91 @@ const removeEmployee = () =>{
 }
 
 const updateEmployeeRole = () =>{
+        inquirer.prompt([{
+            name: 'id', 
+            type: 'input',
+            message:'Please enter id number that you would like to update title'
 
+        },
 
+        {
+            name: 'title', 
+            type: 'input',
+            message:'Please enter new title'
 
+        }
+    
+       ]).then(updateInfo=>{
+           connection.query('UPDATE role SET ? WHERE?',[
+               { 
+                title: updateInfo.title
+               },
+               {
+                 id: updateInfo.id  
+               }], 
+               (err, results)=>{
+                  if(err) throw err
+                  console.table(results)
+                  intro();
+               })
+
+        })
 
 }
 
+//Update employee managers
+
+// Delete departments, roles, and employees
+
+// View the total utilized budget of a department -- ie the combined salaries of all employees in that department
+
+
+const updateEmployeeManager = () =>{
+    inquirer.prompt([{
+        name: 'action', 
+        type: 'list',
+        message:'What would you like to update for Manager',
+        choices:['Title', 'Salary']
+
+    },
+
+   ]).then(selection=>{
+       if(selection.action === 'Title'){
+           updateManagerTitle();
+       }
+       else if (selection.action === 'Salary'){
+           updateManagerSalary();
+       }
+
+    })
+
+}
+
+const updateManagerTitle = () =>{
+     inquirer.prompt([
+         {name: 'id',
+           type:'input',
+        message: 'Please enter manager\'s id'},
+
+         {
+         name: 'title',
+         type: 'input',
+         message: 'What is the new Tile for Manager'
+         }
+    ]).then(managerInfo =>{
+        connection.query('UPDATE role SET ? WHERE?',[
+            { 
+             title: managerInfo.title
+            },
+            {
+              id: managerInfo.id  
+            }], 
+            (err, results)=>{
+               if(err) throw err
+               console.table(results)
+               intro();
+            })
+
+    })
+
+}
