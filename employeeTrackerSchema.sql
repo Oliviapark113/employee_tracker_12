@@ -100,13 +100,23 @@ UPDATE employee SET role_id=10 WHERE id=3;
 
 -- sales dept 20
 
-UPDATE role SET department_id=20 WHERE id=4;
-UPDATE role SET department_id=20 WHERE id=5;
-UPDATE role SET department_id=20 WHERE id=6;
+UPDATE role SET department_id=1 WHERE id=1;
+UPDATE role SET department_id=2 WHERE id=2;
+UPDATE role SET department_id=3 WHERE id=3;
+UPDATE role SET department_id=4 WHERE id=4;
+UPDATE role SET department_id=5 WHERE id=5;
+UPDATE role SET department_id=6 WHERE id=6;
+UPDATE role SET department_id=7 WHERE id=7;
+UPDATE role SET department_id=8 WHERE id=8;
 
-UPDATE employee SET role_id=20 WHERE id=4;
-UPDATE employee SET role_id=20 WHERE id=5;
-UPDATE employee SET role_id=20 WHERE id=6;
+UPDATE employee SET role_id=1 WHERE id=1;
+UPDATE employee SET role_id=2 WHERE id=2;
+UPDATE employee SET role_id=3 WHERE id=3;
+UPDATE employee SET role_id=4 WHERE id=4;
+UPDATE employee SET role_id=5 WHERE id=5;
+UPDATE employee SET role_id=6 WHERE id=6;
+UPDATE employee SET role_id=7 WHERE id=7;
+UPDATE employee SET role_id=8 WHERE id=8;
 
 -- legal dept 30 
 UPDATE role SET department_id=30 WHERE id=7;

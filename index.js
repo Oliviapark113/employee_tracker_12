@@ -76,7 +76,10 @@ const intro = () =>{
 const readAllEmployeeByDept = ()=>{
   
     
-    connection.query('SELECT * FROM ')
+    connection.query('SELECT employee.id, employee.first_name, employee.last_name, employee.manager,role.title, role.department, role.salary FROM employee INNER JOIN role ON role.id = employee.role_id;',(err, results)=>{
+        if (err) throw err
+        console.table(results)
+    })
 
 
 
