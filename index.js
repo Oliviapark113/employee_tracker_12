@@ -134,7 +134,7 @@ const addEmployee =()=>{
 
      ]).then(info =>{
          let questions; 
-         if(!info.confirmation){
+         if(info.confirmation){
              questions =[
                  { name: 'managerId',
                   type: 'input',
@@ -164,5 +164,24 @@ const addEmployee =()=>{
         })
 
     })
+
+}
+
+const removeEmployee = () =>{
+    inquirer.prompt([
+        { name: 'id',
+          type:'input',
+          message: 'Please enter employee\'s id number you would like to remove?'
+
+        }]).then(idInfo =>{
+            connection.query('DELETE FROM employee WHERE?',{id:idInfo},
+            (err, results)=>{
+                if(err) throw err
+                  console.table(results)
+                  intro();
+                
+                })
+
+        })
 
 }
