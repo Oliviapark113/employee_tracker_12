@@ -120,10 +120,22 @@ SELECT * FROM employee;
 
 ALTER TABLE role ADD department VARCHAR(30);
 ALTER TABLE role ADD manager VARCHAR(30);
+ALTER TABLE role
+DROP COLUMN manager;
+ALTER TABLE employee ADD manager VARCHAR(30);
+
+UPDATE role set department = 'Engineering' WHERE department_id =10;
+UPDATE role set department = 'Sales' WHERE department_id =20;
+UPDATE role set department = 'Legal' WHERE department_id =30;
+
+UPDATE employee set manager = 'David Allen' WHERE manager_id =3;
+UPDATE employee set manager = 'Ashley Judd' WHERE manager_id =7;
+UPDATE employee set manager = 'Robert Rodrigez' WHERE manager_id =8;
+
 
 -- Inner Join 
-SELECT employee.id, employee.first_name, employee.last_name, 
-role.title, role.department, role.salary, role.manager 
+SELECT employee.id, employee.first_name, employee.last_name, employee.manager, 
+role.title, role.department, role.salary 
 FROM employee
 INNER JOIN role ON role.department_id = employee.role_id;
 

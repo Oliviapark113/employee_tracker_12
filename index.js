@@ -72,15 +72,9 @@ const intro = () =>{
 
 }
 
-const addDeptandManger = (department, manager)=>{
-   connection.query('INSERT INTO role SET?', {department,
-manager}, (err)=>{
-    if(err)throw err
-})
-}
 
 const readAllEmployeeByDept = ()=>{
-    addDeptandManger('Engineering', 'David Allen');
+  
     
     connection.query('SELECT * FROM ')
 
