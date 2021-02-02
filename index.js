@@ -6,7 +6,7 @@ const connection = mysql.createConnection({
        port: 3306,
        user: 'root',
        password:'coder5378!',
-       database:'employee_db'
+       database:'employeeTracker_db'
 
 });
 
@@ -29,7 +29,8 @@ const intro = () =>{
                 "Remove Employee",
                 "Update Employee Role",
                 "Update Employee Manager",
-                "View All Roles"
+                "View All Roles",
+                "EXIT"
                 ]
 
         }]).then(answer =>{
@@ -58,6 +59,10 @@ const intro = () =>{
 
             else if (answer.choice === "View All Roles" ){
                 updateEmployeeManager();
+            }
+
+            else{
+                connection.end()
             }
         })
 
