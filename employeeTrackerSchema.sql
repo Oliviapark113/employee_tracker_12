@@ -38,66 +38,101 @@ CREATE TABLE employee(
 
 INSERT INTO department (name) VALUES ('Olivia Park');
 INSERT INTO role (title, salary, department_id ) 
-VALUES ('Software Engineer', 95000, 1);
+VALUES ('Software Engineer', 95000, 10);
 INSERT INTO employee (first_name, last_name, role_id, manager_id)
-VALUES('Olivia', 'Park', 1, 3);
+VALUES('Olivia', 'Park', 10, 3);
 
 INSERT INTO department (name) VALUES ('Chris Brown');
 INSERT INTO role (title, salary, department_id ) 
-VALUES ('Software Engineer', 85000, 2);
+VALUES ('Software Engineer', 85000, 10);
 INSERT INTO employee (first_name, last_name, role_id, manager_id)
-VALUES('Chris', 'Brown', 2, 3);
+VALUES('Chris', 'Brown', 10, 3);
 
 INSERT INTO department (name) VALUES ('David Allen');
 INSERT INTO role (title, salary, department_id ) 
-VALUES ('Lead Engineer', 125000, 3);
+VALUES ('Lead Engineer', 125000, 10);
 INSERT INTO employee (first_name, last_name, role_id)
-VALUES('David', 'Allen', 3);
+VALUES('David', 'Allen', 10);
 
 INSERT INTO department (name) VALUES ('Jake Lau');
 INSERT INTO role (title, salary, department_id ) 
-VALUES ('Salesperson', 75000, 4);
+VALUES ('Salesperson', 75000, 20);
 INSERT INTO employee (first_name, last_name, role_id, manager_id)
-VALUES('Jake', 'Lau', 4, 7);
+VALUES('Jake', 'Lau', 20, 6);
 
 INSERT INTO department (name) VALUES ('Kevin Tupic');
 INSERT INTO role (title, salary, department_id ) 
-VALUES ('Salesperson', 65000, 5);
+VALUES ('Salesperson', 65000, 20);
 INSERT INTO employee (first_name, last_name, role_id, manager_id)
-VALUES('Kevin', 'Tupic', 5, 7);
+VALUES('Kevin', 'Tupic', 20, 6);
 
 INSERT INTO department (name) VALUES ('Jason Brown');
 INSERT INTO role (title, salary, department_id ) 
-VALUES ('Sales Lead', 135000, 6);
+VALUES ('Sales Lead', 135000, 20);
 INSERT INTO employee (first_name, last_name, role_id, manager_id)
-VALUES('Jason', 'Brown', 6, 7);
+VALUES('Jason', 'Brown', 20, 7);
 
 INSERT INTO department (name) VALUES ('Ashley Judd');
 INSERT INTO role (title, salary, department_id ) 
-VALUES ('Lawyer', 105000, 7);
+VALUES ('Lawyer', 105000, 30);
 INSERT INTO employee (first_name, last_name, role_id, manager_id)
-VALUES('Ashley', 'Judd', 7, 8);
+VALUES('Ashley', 'Judd', 30, 8);
 
 INSERT INTO department (name) VALUES ('Robert Rodrigez');
 INSERT INTO role (title, salary, department_id ) 
-VALUES ('Leal Lead', 235000, 8);
+VALUES ('Leal Lead', 235000, 30);
 INSERT INTO employee (first_name, last_name, role_id)
-VALUES('Robert', 'Rodrigez', 8);
-
-
+VALUES('Robert', 'Rodrigez', 30);
 
 
 -- DELETE FROM department WHERE id = 12;
 -- DELETE FROM role WHERE id = 12;
 -- DELETE FROM emloyee WHERE id=10;
 
+-- softengineer dept  10 
+UPDATE role SET department_id=10 WHERE id=1;
+UPDATE role SET department_id=10 WHERE id=2;
+UPDATE role SET department_id=10 WHERE id=3;
 
--- UPDATE employee SET manager_id=2 WHERE id=1;
+UPDATE employee SET role_id=10 WHERE id=1;
+UPDATE employee SET role_id=10 WHERE id=2;
+UPDATE employee SET role_id=10 WHERE id=3;
 
--- UPDATE department SET id=2 WHERE id=6;
--- UPDATE employee SET id=2 WHERE id=5;
-UPDATE role SET id=2 WHERE id=6;
+-- sales dept 20
+
+UPDATE role SET department_id=20 WHERE id=4;
+UPDATE role SET department_id=20 WHERE id=5;
+UPDATE role SET department_id=20 WHERE id=6;
+
+UPDATE employee SET role_id=20 WHERE id=4;
+UPDATE employee SET role_id=20 WHERE id=5;
+UPDATE employee SET role_id=20 WHERE id=6;
+
+-- legal dept 30 
+UPDATE role SET department_id=30 WHERE id=7;
+UPDATE role SET department_id=30 WHERE id=8;
+UPDATE employee SET role_id=30 WHERE id=7;
+UPDATE employee SET role_id=30 WHERE id=8;
 
 SELECT * FROM department; 
 SELECT * FROM role;
 SELECT * FROM employee;
+
+ALTER TABLE role ADD department VARCHAR(30);
+ALTER TABLE role ADD manager VARCHAR(30);
+
+-- Inner Join 
+SELECT employee.id, employee.first_name, employee.last_name, 
+role.title, role.department, role.salary, role.manager 
+FROM employee
+INNER JOIN role ON role.department_id = employee.role_id;
+
+-- -- Left Join we want to see all authors whether or not .. 
+SELECT books.title, authors.firstName, authors.lastName 
+FROM books
+LEFT JOIN authors ON books.authorId = authors.id;
+
+-- -- Right Join
+SELECT books.title, authors.firstName, authors.lastName 
+FROM books
+RIGHT JOIN authors ON books.authorId = authors.id;

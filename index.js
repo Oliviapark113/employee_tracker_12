@@ -18,9 +18,8 @@ connection.connect(err=>{
 })
 
 const intro = () =>{
-
    inquirer.prompt([{
-      name: "choice",
+      name: "action",
       type: "list",
       message: "What would you like to do?",
       choices :["View All Employees By Department",
@@ -34,37 +33,57 @@ const intro = () =>{
                 ]
 
         }]).then(answer =>{
-            if(answer.choice === "View All Employees By Department"){
+            switch(answer.action) {
+                
+                case "View All Employees By Department":
                 readAllEmployeeByDept();
-            }
-            else if (answer.choice === "View All Employees By Manager" ){
+                break;
+
+                case "View All Employees By Manager" :
                 readAllManager();
-            }
+                break;
 
-            else if (answer.choice === "Add Employee" ){
+                case "Add Employee":
                 addEmployee();
-            }
+                break;
 
-            else if (answer.choice === "Remove Employee" ){
+                case "Remove Employee":
                 removeEmployee();
-            }
+                break;
 
-            else if (answer.choice === "Update Employee Role" ){
+                case "Update Employee Role":
                 updateEmployeeRole();
-            }
+                break;
 
-            else if (answer.choice === "Update Employee Manager" ){
+                case "Update Employee Manager":
                 updateEmployeeManager();
-            }
+                break;
 
-            else if (answer.choice === "View All Roles" ){
-                updateEmployeeManager();
-            }
+                case "View All Roles":
+                    readAllRoles();
+                    break;
 
-            else{
-                connection.end()
+                    case "EXIT":
+                        connection.end();
+                        break;
             }
+           
         })
+
+}
+
+const addDeptandManger = (department, manager)=>{
+   connection.query('INSERT INTO role SET?', {department,
+manager}, (err)=>{
+    if(err)throw err
+})
+}
+
+const readAllEmployeeByDept = ()=>{
+    addDeptandManger('Engineering', 'David Allen');
+    
+    connection.query('SELECT * FROM ')
+
 
 
 }
