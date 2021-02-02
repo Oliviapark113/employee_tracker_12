@@ -133,9 +133,9 @@ const addEmployee =()=>{
        }
 
      ]).then(info =>{
-         let questions; 
+        
          if(info.confirmation){
-             questions =[
+             inquirer.prompt([
                  { name: 'managerId',
                   type: 'input',
                   message: 'Please enter employee\'s manager id '},
@@ -144,26 +144,26 @@ const addEmployee =()=>{
                   type: 'input',
                   message: 'Please enter employee\'s manager name '}
                 
-                ]
+                ]).then(info2 =>{
+
+                    connection.query('INSERT INTO employee SET?', {
+                     first_name: info.firstName,
+                     last_name: info.lastName,
+                     role_id: info.roleId,
+                     manager_id: info2.managerId,
+                     manager: info2.managerName
+            
+                    },(err, results)=>{
+                        if(err)throw err
+                        console.table(results)
+                        intro();
+                    })
+            
+                })
+
             }
-
     })
-    inquirer.prompt(questions).then(info2 =>{
-
-        connection.query('INSERT INTO employee SET?', {
-         first_name: info.firstName,
-         last_name: info.lastName,
-         role_id: info.roleId,
-         manager_id: info2.managerId,
-         manager: info2.managerName
-
-        },(err, results)=>{
-            if(err)throw err
-            console.table(results)
-            intro();
-        })
-
-    })
+    
 
 }
 
@@ -174,7 +174,7 @@ const removeEmployee = () =>{
           message: 'Please enter employee\'s id number you would like to remove?'
 
         }]).then(idInfo =>{
-            connection.query('DELETE FROM employee WHERE?',{id:idInfo},
+            connection.query('DELETE FROM employee WHERE?',{id:idInfo.id},
             (err, results)=>{
                 if(err) throw err
                   console.table(results)
@@ -185,3 +185,11 @@ const removeEmployee = () =>{
         })
 
 }
+
+const updateEmployeeRole = () =>{
+
+
+
+
+}
+
