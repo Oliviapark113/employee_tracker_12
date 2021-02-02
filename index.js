@@ -22,7 +22,8 @@ const intro = () =>{
       name: "action",
       type: "list",
       message: "What would you like to do?",
-      choices :["View All Employees By Department",
+      choices :["View All Employees",
+                "View All Employees By Department",
                 "View All Employees By Manager",
                 "Add Employee",
                 "Remove Employee",
@@ -34,6 +35,10 @@ const intro = () =>{
 
         }]).then(answer =>{
             switch(answer.action) {
+
+                case "View All Employees":
+                readAllEmployee();
+                break;
                 
                 case "View All Employees By Department":
                 readAllEmployeeByDept();
@@ -72,6 +77,15 @@ const intro = () =>{
 
 }
 
+const readAllEmployee =()=>{
+
+    connection.query('SELECT employee.id, first_name, last_name,title ,department FROM employee INNER JOIN role ON role.id = employee.id;', (err,results)=>{
+        if(err) throw err
+        console.table(results)
+        intro();
+    })
+}
+
 
 const readAllEmployeeByDept = ()=>{
   
@@ -79,8 +93,76 @@ const readAllEmployeeByDept = ()=>{
     connection.query('SELECT employee.id, employee.first_name, employee.last_name, employee.manager,role.title, role.department, role.salary FROM employee INNER JOIN role ON role.id = employee.role_id;',(err, results)=>{
         if (err) throw err
         console.table(results)
+        intro();
     })
 
 
+
+}
+
+const readAllManager = () =>{
+  connection.query('SELECT * FROM employee WHERE manager_id IS null;', (err, results)=>{
+      if(err) throw err
+      console.table(results)
+      intro();
+  })
+
+
+}
+
+const addEmployee =()=>{
+     inquirer.prompt([
+       { name: "firstName",
+         type:"input",
+         message:"What employee's first name"
+       },
+
+       { name: "lastName",
+         type:"input",
+         message:"What employee's last name"
+       },
+
+       { name: "roleId",
+         type:"input",
+         message:"What employee's roleID"
+       },
+
+       { name: "confirmation",
+         message: "Is this managing role",
+         default:false
+       }
+
+     ]).then(info =>{
+         let questions; 
+         if(!info.confirmation){
+             questions =[
+                 { name: 'managerId',
+                  type: 'input',
+                  message: 'Please enter employee\'s manager id '},
+
+                  { name: 'managerName',
+                  type: 'input',
+                  message: 'Please enter employee\'s manager name '}
+                
+                ]
+            }
+
+    })
+    inquirer.prompt(questions).then(info2 =>{
+
+        connection.query('INSERT INTO employee SET?', {
+         first_name: info.firstName,
+         last_name: info.lastName,
+         role_id: info.roleId,
+         manager_id: info2.managerId,
+         manager: info2.managerName
+
+        },(err, results)=>{
+            if(err)throw err
+            console.table(results)
+            intro();
+        })
+
+    })
 
 }
