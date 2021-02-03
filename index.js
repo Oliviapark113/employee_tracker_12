@@ -17,59 +17,61 @@ connection.connect(err=>{
 
 })
 
+    const choices =[  "View All Employees",
+                     "View All Employees By Department",
+                     "View All Employees By Manager",
+                     "Add Employee",
+                     "Remove Employee",
+                    "Update Employee Role",
+                    "Update Employee Manager",
+                    "View All Roles",
+                    "EXIT"
+                    ]
+
 const intro = () =>{
    inquirer.prompt([{
       name: "action",
       type: "list",
       message: "What would you like to do?",
-      choices :["View All Employees",
-                "View All Employees By Department",
-                "View All Employees By Manager",
-                "Add Employee",
-                "Remove Employee",
-                "Update Employee Role",
-                "Update Employee Manager",
-                "View All Roles",
-                "EXIT"
-                ]
+      choices :choices
 
         }]).then(answer =>{
             switch(answer.action) {
 
-                case "View All Employees":
+                case choices[0]:
                 readAllEmployee();
                 break;
                 
-                case "View All Employees By Department":
+                case choices[1]:
                 readAllEmployeeByDept();
                 break;
 
-                case "View All Employees By Manager" :
+                case choices[2] :
                 readAllManager();
                 break;
 
-                case "Add Employee":
+                case choices[3]:
                 addEmployee();
                 break;
 
-                case "Remove Employee":
+                case choices[4]:
                 removeEmployee();
                 break;
 
-                case "Update Employee Role":
+                case choices[5]:
                 updateEmployeeRole();
                 break;
 
-                case "Update Employee Manager":
+                case choices[6]:
                 updateEmployeeManager();
                 break;
 
-                case "View All Roles":
+                case choices[7]:
                     readAllRoles();
                     break;
 
-                    case "EXIT":
-                        connection.end();
+                    case choices[8]:
+                        exit();
                         break;
             }
            
@@ -78,19 +80,20 @@ const intro = () =>{
 }
 
 const readAllEmployee =()=>{
-
-    connection.query('SELECT employee.id, first_name, last_name,title ,department FROM employee INNER JOIN role ON role.id = employee.id;', (err,results)=>{
+    let query = 'SELECT employee.id, first_name, last_name,title ,department FROM employee INNER JOIN role ON role.id = employee.id;'
+    connection.query(query, (err,results)=>{
         if(err) throw err
         console.table(results)
         intro();
+         
     })
 }
 
 
 const readAllEmployeeByDept = ()=>{
-  
+  let queryByDept = 'SELECT employee.id, employee.first_name, employee.last_name, employee.manager,role.title, role.department, role.salary FROM employee INNER JOIN role ON role.id = employee.role_id;'
     
-    connection.query('SELECT employee.id, employee.first_name, employee.last_name, employee.manager,role.title, role.department, role.salary FROM employee INNER JOIN role ON role.id = employee.role_id;',(err, results)=>{
+    connection.query(queryByDept,(err, results)=>{
         if (err) throw err
         console.table(results)
         intro();
@@ -274,4 +277,9 @@ const updateManagerTitle = () =>{
 
     })
 
+}
+
+const exit = () => {
+    console.log('exit')
+    process.exit()
 }
