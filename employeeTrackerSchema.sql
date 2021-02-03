@@ -38,58 +38,51 @@ CREATE TABLE employee(
 
 INSERT INTO department (name) VALUES ('Olivia Park');
 INSERT INTO role (title, salary, department_id ) 
-VALUES ('Software Engineer', 95000, 10);
+VALUES ('Software Engineer', 95000, 1);
 INSERT INTO employee (first_name, last_name, role_id, manager_id)
-VALUES('Olivia', 'Park', 10, 3);
+VALUES('Olivia', 'Park', 1, 3);
 
 INSERT INTO department (name) VALUES ('Chris Brown');
 INSERT INTO role (title, salary, department_id ) 
-VALUES ('Software Engineer', 85000, 10);
+VALUES ('Software Engineer', 85000, 1);
 INSERT INTO employee (first_name, last_name, role_id, manager_id)
-VALUES('Chris', 'Brown', 10, 3);
+VALUES('Chris', 'Brown', 2, 3);
 
 INSERT INTO department (name) VALUES ('David Allen');
 INSERT INTO role (title, salary, department_id ) 
-VALUES ('Lead Engineer', 125000, 10);
+VALUES ('Lead Engineer', 125000, 1);
 INSERT INTO employee (first_name, last_name, role_id)
-VALUES('David', 'Allen', 10);
+VALUES('David', 'Allen', 3);
 
 INSERT INTO department (name) VALUES ('Jake Lau');
 INSERT INTO role (title, salary, department_id ) 
-VALUES ('Salesperson', 75000, 20);
+VALUES ('Salesperson', 75000, 2);
 INSERT INTO employee (first_name, last_name, role_id, manager_id)
-VALUES('Jake', 'Lau', 20, 6);
+VALUES('Jake', 'Lau', 4, 7);
 
 INSERT INTO department (name) VALUES ('Kevin Tupic');
 INSERT INTO role (title, salary, department_id ) 
-VALUES ('Salesperson', 65000, 20);
+VALUES ('Salesperson', 65000, 2);
 INSERT INTO employee (first_name, last_name, role_id, manager_id)
-VALUES('Kevin', 'Tupic', 20, 6);
+VALUES('Kevin', 'Tupic', 5, 7);
 
 INSERT INTO department (name) VALUES ('Jason Brown');
 INSERT INTO role (title, salary, department_id ) 
-VALUES ('Sales Lead', 135000, 20);
+VALUES ('Sales Lead', 135000, 2);
 INSERT INTO employee (first_name, last_name, role_id, manager_id)
-VALUES('Jason', 'Brown', 20, 7);
+VALUES('Jason', 'Brown', 6, 7);
 
 INSERT INTO department (name) VALUES ('Ashley Judd');
 INSERT INTO role (title, salary, department_id ) 
-VALUES ('Lawyer', 105000, 30);
+VALUES ('Lawyer', 105000, 3);
 INSERT INTO employee (first_name, last_name, role_id, manager_id)
-VALUES('Ashley', 'Judd', 30, 8);
+VALUES('Ashley', 'Judd', 7, 8);
 
 INSERT INTO department (name) VALUES ('Robert Rodrigez');
 INSERT INTO role (title, salary, department_id ) 
-VALUES ('Leal Lead', 235000, 30);
+VALUES ('Leal Lead', 235000, 3);
 INSERT INTO employee (first_name, last_name, role_id)
-VALUES('Robert', 'Rodrigez', 30);
-
-
-ALTER TABLE role ADD department VARCHAR(30);
-ALTER TABLE role ADD manager VARCHAR(30);
-ALTER TABLE role
-DROP COLUMN manager;
-ALTER TABLE employee ADD manager VARCHAR(30);
+VALUES('Robert', 'Rodrigez', 8);
 
 
 UPDATE employee set manager = 'David Allen' WHERE manager_id =3;
@@ -99,24 +92,20 @@ UPDATE employee set manager = 'Robert Rodrigez' WHERE manager_id =8;
 
 -- readAll employee
 SELECT employee.id, employee.first_name, employee.last_name,
-role.title,employee.manager, department.department
+role.title,department.department,role.salary, employee.manager
 FROM employee
 LEFT JOIN role ON role.id = employee.role_id
 LEFT JOIN department ON department.id = role.department_id;
 
--- readAllemloyee by Department 
--- SELECT employee.id, employee.first_name, employee.last_name, employee.manager, 
--- role.title, role.salary 
--- FROM employee
--- INNER JOIN role ON role.id = employee.role_id;
-
+-- readAllemloyee by Department
 SELECT employee.id, employee.first_name, employee.last_name, role.title, department.name
 FROM employee
 LEFT JOIN role ON role.id = employee.id 
 LEFT JOIN department ON department.id = role.department_id WHERE department.department = 'Engineering';
 
 -- readAllmanager 
--- SELECT * FROM employee WHERE manager_id IS null;
+
+SELECT * FROM employee WHERE  manager_id IS null OR role_id = 7;
 
 -- -- readAllroles  .. 
 SELECT department.id, department.name, role.title, 

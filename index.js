@@ -77,7 +77,8 @@ const intro = () =>{
 }
 
 const readAllEmployee =()=>{
-    let query = 'SELECT employee.id, employee.first_name, employee.last_name,role.title,employee.manager,department.department FROM employee LEFT JOIN role ON role.id = employee.role_id LEFT JOIN department ON department.id = role.department_id;'
+    let query = 'SELECT employee.id, employee.first_name, employee.last_name,role.title,department.department,role.salary, employee.manager FROM employee LEFT JOIN role ON role.id = employee.role_id LEFT JOIN department ON department.id = role.department_id;'
+
     connection.query(query, (err,results)=>{
         if(err) throw err
         console.table(results)
@@ -106,77 +107,76 @@ const readAllEmployeeByDept = ()=>{
 }
 
 const readAllManager = () =>{
-  connection.query('SELECT * FROM employee WHERE manager_id IS null;', (err, results)=>{
+    let queryByManager = 'SELECT * FROM employee WHERE  manager_id IS null OR role_id = 7;'
+  connection.query(queryByManager, (err, results)=>{
       if(err) throw err
       console.table(results)
       intro();
   })
 }
 
-const addEmployee =()=>{
+const addEmployee = () =>{
      inquirer.prompt([
+
        { name: "firstName",
          type:"input",
-         message:"What employee's first name"
+         message:"What employee's first name?"
        },
 
        { name: "lastName",
-         type:"input",
-         message:"What employee's last name"
+         type: "input",
+         message:"What employee's last name?"
        },
 
-       { name: "roleId",
-         type:"input",
-         message:"What employee's roleID"
+       { name: "role",
+         type:"list",
+         message:"What employee's role?",
+         choices: ["Software Engineer", "Lead Engineer", "Salesperson","Sales Lead","Lawyer","Legal Lead"]
        },
 
-       { name: "confirmation",
-         message: "Is this managing role",
-         default:false
+       { name: "manager",
+         message: "Who is employee's manager?",
+         type: "list",
+         choices:["None", "David Allen", "Ashley Judd", "Robert Rodrigez"]
+
        }
 
-     ]).then(info =>{
-        
-         if(info.confirmation){
-             inquirer.prompt([
-                 { name: 'managerId',
-                  type: 'input',
-                  message: 'Please enter employee\'s manager id '},
-
-                  { name: 'managerName',
-                  type: 'input',
-                  message: 'Please enter employee\'s manager name '}
-                
-                ]).then(info2 =>{
-
-                    connection.query('INSERT INTO employee SET?', {
-                     first_name: info.firstName,
-                     last_name: info.lastName,
-                     role_id: info.roleId,
-                     manager_id: info2.managerId,
-                     manager: info2.managerName
-            
-                    },(err)=>{
-                        if(err)throw err
-                        readAllEmployee()
-                        intro();
-                    })
-                })
-            }
-    })   
+     ]).then(answer =>
+        {  connection.query("INSERT INTO employee SET ?",
+          {first_name: answer.firstName,
+            last_name: answer.lastName,
+            manager:answer.manager},(err)=>{
+                     if (err) throw err
+                    readAllEmployee()
+                    intro()
+               
+        }
+    )
+})
 }
 
 const removeEmployee = () =>{
-    inquirer.prompt([
-        { name: 'id',
-          type:'input',
-          message: 'Please enter employee\'s id number you would like to remove?'
 
-        }]).then(idInfo =>{
-            connection.query('DELETE FROM employee WHERE?',{id:idInfo.id},
-            (err)=>{
+    inquirer.prompt([
+        { name: 'firstName',
+          type:'input',
+          message: 'What is first name of employee you would like to remove?'
+
+        },
+
+        { name: 'lastName',
+          type:'input',
+          message: 'What is last name of employee you would like to remove?'
+
+        }
+
+    ]).then(answer =>{
+            connection.query('DELETE FROM employee WHERE ?',
+            [{first_name:answer.firstName,last_name:answer.lastName}],
+            (err, results)=>{
                 if(err) throw err
-                  readAllEmployee()
+                console.table(results)
+                  readAllEmployee();
                   intro();
                 })
         })
@@ -223,7 +223,7 @@ const updateEmployeeManager = () =>{
         message:'What would you like to update for Manager',
         choices:['Title', 'Salary']
 
-    },
+    }
 
    ]).then(selection=>{
        if(selection.action === 'Title'){
@@ -261,13 +261,12 @@ const updateManagerTitle = () =>{
                console.table(results)
                intro();
             })
-
-    })
+})
 
 }
 
 const readAllRoles = () =>{
-  let queryByRoles = 'SELECT department.id, department.name, role.title, role.department FROM department LEFT JOIN role ON department.id = role.department_id;'
+  let queryByRoles = 'SELECT department.id, department.department, role.title, role.department FROM department LEFT JOIN role ON department.id = role.department_id;'
   connection.query(queryByRoles, (err, results)=>{
       if(err)throw err
       console.table(results)
@@ -277,6 +276,6 @@ const readAllRoles = () =>{
 }
 
 const exit = () => {
-    console.log('exit')
-    process.exit()
+   connection.end();
+    process.exit();
 }
