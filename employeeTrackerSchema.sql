@@ -85,79 +85,38 @@ INSERT INTO employee (first_name, last_name, role_id)
 VALUES('Robert', 'Rodrigez', 30);
 
 
--- DELETE FROM department WHERE id = 12;
--- DELETE FROM role WHERE id = 12;
--- DELETE FROM emloyee WHERE id=10;
-
--- softengineer dept  10 
-UPDATE role SET department_id=10 WHERE id=1;
-UPDATE role SET department_id=10 WHERE id=2;
-UPDATE role SET department_id=10 WHERE id=3;
-
-UPDATE employee SET role_id=10 WHERE id=1;
-UPDATE employee SET role_id=10 WHERE id=2;
-UPDATE employee SET role_id=10 WHERE id=3;
-
--- sales dept 20
-
-UPDATE role SET department_id=1 WHERE id=1;
-UPDATE role SET department_id=2 WHERE id=2;
-UPDATE role SET department_id=3 WHERE id=3;
-UPDATE role SET department_id=4 WHERE id=4;
-UPDATE role SET department_id=5 WHERE id=5;
-UPDATE role SET department_id=6 WHERE id=6;
-UPDATE role SET department_id=7 WHERE id=7;
-UPDATE role SET department_id=8 WHERE id=8;
-
-UPDATE employee SET role_id=1 WHERE id=1;
-UPDATE employee SET role_id=2 WHERE id=2;
-UPDATE employee SET role_id=3 WHERE id=3;
-UPDATE employee SET role_id=4 WHERE id=4;
-UPDATE employee SET role_id=5 WHERE id=5;
-UPDATE employee SET role_id=6 WHERE id=6;
-UPDATE employee SET role_id=7 WHERE id=7;
-UPDATE employee SET role_id=8 WHERE id=8;
-
--- legal dept 30 
-UPDATE role SET department_id=30 WHERE id=7;
-UPDATE role SET department_id=30 WHERE id=8;
-UPDATE employee SET role_id=30 WHERE id=7;
-UPDATE employee SET role_id=30 WHERE id=8;
-
-SELECT * FROM department; 
-SELECT * FROM role;
-SELECT * FROM employee;
-
 ALTER TABLE role ADD department VARCHAR(30);
 ALTER TABLE role ADD manager VARCHAR(30);
 ALTER TABLE role
 DROP COLUMN manager;
 ALTER TABLE employee ADD manager VARCHAR(30);
 
-UPDATE role set department = 'Engineering' WHERE department_id =10;
-UPDATE role set department = 'Sales' WHERE department_id =20;
-UPDATE role set department = 'Legal' WHERE department_id =30;
 
 UPDATE employee set manager = 'David Allen' WHERE manager_id =3;
 UPDATE employee set manager = 'Ashley Judd' WHERE manager_id =7;
 UPDATE employee set manager = 'Robert Rodrigez' WHERE manager_id =8;
 
 
--- Inner Join
 -- readAll employee
-SELECT employee.id, employee.first_name, employee.last_name, employee.manager,
-role.title, role.department
-FROM role
-RIGHT JOIN employee ON role.id = employee.role_id;
+SELECT employee.id, employee.first_name, employee.last_name,
+role.title,employee.manager, department.department
+FROM employee
+LEFT JOIN role ON role.id = employee.role_id
+LEFT JOIN department ON department.id = role.department_id;
 
 -- readAllemloyee by Department 
-SELECT employee.id, employee.first_name, employee.last_name, employee.manager, 
-role.title, role.department, role.salary 
+-- SELECT employee.id, employee.first_name, employee.last_name, employee.manager, 
+-- role.title, role.salary 
+-- FROM employee
+-- INNER JOIN role ON role.id = employee.role_id;
+
+SELECT employee.id, employee.first_name, employee.last_name, role.title, department.name
 FROM employee
-INNER JOIN role ON role.id = employee.role_id;
+LEFT JOIN role ON role.id = employee.id 
+LEFT JOIN department ON department.id = role.department_id WHERE department.department = 'Engineering';
 
 -- readAllmanager 
-SELECT * FROM employee WHERE manager_id IS null;
+-- SELECT * FROM employee WHERE manager_id IS null;
 
 -- -- readAllroles  .. 
 SELECT department.id, department.name, role.title, 
@@ -174,3 +133,11 @@ SELECT employee.id, employee.first_name, employee.last_name, employee.manager,
 role.title, role.department
 FROM role
 RIGHT JOIN employee ON role.id = employee.role_id;
+
+SELECT * FROM department; 
+SELECT * FROM role;
+SELECT * FROM employee; 
+
+ALTER TABLE department RENAME COLUMN name TO department
+
+

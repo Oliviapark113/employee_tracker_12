@@ -17,15 +17,15 @@ connection.connect(err=>{
 
 })
 
-    const choices =[  "View All Employees",
+    const choices =[ "View All Employees",
                      "View All Employees By Department",
                      "View All Employees By Manager",
                      "Add Employee",
                      "Remove Employee",
-                    "Update Employee Role",
-                    "Update Employee Manager",
-                    "View All Roles",
-                    "EXIT"
+                     "Update Employee Role",
+                     "Update Employee Manager",
+                     "View All Roles",
+                     "EXIT"
                     ]
 
 const intro = () =>{
@@ -37,11 +37,10 @@ const intro = () =>{
 
         }]).then(answer =>{
             switch(answer.action) {
-
                 case choices[0]:
                 readAllEmployee();
                 break;
-                
+
                 case choices[1]:
                 readAllEmployeeByDept();
                 break;
@@ -70,37 +69,40 @@ const intro = () =>{
                     readAllRoles();
                     break;
 
-                    case choices[8]:
+                 case choices[8]:
                         exit();
                         break;
-            }
-           
+            }   
         })
-
 }
 
 const readAllEmployee =()=>{
-    let query = 'SELECT employee.id, employee.first_name, employee.last_name, employee.manager,role.title, role.department FROM role RIGHT JOIN employee ON role.id = employee.role_id;'
+    let query = 'SELECT employee.id, employee.first_name, employee.last_name,role.title,employee.manager,department.department FROM employee LEFT JOIN role ON role.id = employee.role_id LEFT JOIN department ON department.id = role.department_id;'
     connection.query(query, (err,results)=>{
         if(err) throw err
         console.table(results)
         intro();
-         
     })
 }
 
 
 const readAllEmployeeByDept = ()=>{
-  let queryByDept = 'SELECT employee.id, employee.first_name, employee.last_name, employee.manager,role.title, role.department, role.salary FROM employee INNER JOIN role ON role.id = employee.role_id;'
+    inquirer.prompt([{
+        name: 'department',
+        type:'list',
+        choices: ['Engineering', 'Sales', 'Legal']
+    }]).then(answer =>{
+        let queryByDept = 'SELECT employee.id, employee.first_name, employee.last_name, role.title,department.department FROM employee LEFT JOIN role ON role.id = employee.id LEFT JOIN department ON department.id = role.department_id WHERE ?;'
     
-    connection.query(queryByDept,(err, results)=>{
-        if (err) throw err
-        console.table(results)
-        intro();
+        connection.query(queryByDept,{department: answer.department},(err, results)=>{
+            if (err) throw err
+            console.table(results)
+            intro();
+        })
+
     })
 
-
-
+  
 }
 
 const readAllManager = () =>{
@@ -109,8 +111,6 @@ const readAllManager = () =>{
       console.table(results)
       intro();
   })
-
-
 }
 
 const addEmployee =()=>{
@@ -156,18 +156,14 @@ const addEmployee =()=>{
                      manager_id: info2.managerId,
                      manager: info2.managerName
             
-                    },(err, results)=>{
+                    },(err)=>{
                         if(err)throw err
                         readAllEmployee()
                         intro();
                     })
-            
                 })
-
             }
-    })
-    
-
+    })   
 }
 
 const removeEmployee = () =>{
@@ -178,16 +174,12 @@ const removeEmployee = () =>{
 
         }]).then(idInfo =>{
             connection.query('DELETE FROM employee WHERE?',{id:idInfo.id},
-            (err, results)=>{
+            (err)=>{
                 if(err) throw err
-                  console.table(results)
                   readAllEmployee()
                   intro();
-                
                 })
-
         })
-
 }
 
 const updateEmployeeRole = () =>{
@@ -195,16 +187,12 @@ const updateEmployeeRole = () =>{
             name: 'id', 
             type: 'input',
             message:'Please enter id number that you would like to update title'
-
         },
-
         {
             name: 'title', 
             type: 'input',
             message:'Please enter new title'
-
-        }
-    
+        }    
        ]).then(updateInfo=>{
            connection.query('UPDATE role SET ? WHERE?',[
                { 
@@ -218,9 +206,7 @@ const updateEmployeeRole = () =>{
                   console.table(results)
                   intro();
                })
-
         })
-
 }
 
 //Update employee managers
@@ -281,14 +267,12 @@ const updateManagerTitle = () =>{
 }
 
 const readAllRoles = () =>{
-
   let queryByRoles = 'SELECT department.id, department.name, role.title, role.department FROM department LEFT JOIN role ON department.id = role.department_id;'
   connection.query(queryByRoles, (err, results)=>{
       if(err)throw err
       console.table(results)
       intro()
   })
-
 
 }
 
