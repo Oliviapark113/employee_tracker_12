@@ -80,7 +80,7 @@ const intro = () =>{
 }
 
 const readAllEmployee =()=>{
-    let query = 'SELECT employee.id, first_name, last_name,title ,department FROM employee INNER JOIN role ON role.id = employee.id;'
+    let query = 'SELECT employee.id, employee.first_name, employee.last_name, employee.manager,role.title, role.department FROM role RIGHT JOIN employee ON role.id = employee.role_id;'
     connection.query(query, (err,results)=>{
         if(err) throw err
         console.table(results)
@@ -158,7 +158,7 @@ const addEmployee =()=>{
             
                     },(err, results)=>{
                         if(err)throw err
-                        console.table(results)
+                        readAllEmployee()
                         intro();
                     })
             
@@ -181,6 +181,7 @@ const removeEmployee = () =>{
             (err, results)=>{
                 if(err) throw err
                   console.table(results)
+                  readAllEmployee()
                   intro();
                 
                 })

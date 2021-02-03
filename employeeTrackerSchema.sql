@@ -143,18 +143,34 @@ UPDATE employee set manager = 'Ashley Judd' WHERE manager_id =7;
 UPDATE employee set manager = 'Robert Rodrigez' WHERE manager_id =8;
 
 
--- Inner Join 
+-- Inner Join
+-- readAll employee
+SELECT employee.id, employee.first_name, employee.last_name, employee.manager,
+role.title, role.department
+FROM role
+RIGHT JOIN employee ON role.id = employee.role_id;
+
+-- readAllemloyee by Department 
 SELECT employee.id, employee.first_name, employee.last_name, employee.manager, 
 role.title, role.department, role.salary 
 FROM employee
 INNER JOIN role ON role.id = employee.role_id;
 
--- -- Left Join we want to see all authors whether or not .. 
-SELECT books.title, authors.firstName, authors.lastName 
-FROM books
-LEFT JOIN authors ON books.authorId = authors.id;
+-- readAllmanager 
+SELECT * FROM employee WHERE manager_id IS null;
+
+-- -- readAllroles  .. 
+SELECT department.id, department.name, role.title, 
+role.department 
+FROM department
+LEFT JOIN 
+role ON department.id = role.department_id;
+
+-- View the total utilized budget of a department 
+-- ie the combined salaries of all employees in that department
 
 -- -- Right Join
-SELECT books.title, authors.firstName, authors.lastName 
-FROM books
-RIGHT JOIN authors ON books.authorId = authors.id;
+SELECT employee.id, employee.first_name, employee.last_name, employee.manager,
+role.title, role.department
+FROM role
+RIGHT JOIN employee ON role.id = employee.role_id;
