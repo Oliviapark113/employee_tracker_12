@@ -279,6 +279,18 @@ const updateManagerTitle = () =>{
 
 }
 
+const readAllRoles = () =>{
+
+  let queryByRoles = 'SELECT department.id, department.name, role.title, role.department FROM department LEFT JOIN role ON department.id = role.department_id;'
+  connection.query(queryByRoles, (err, results)=>{
+      if(err)throw err
+      console.table(results)
+      intro()
+  })
+
+
+}
+
 const exit = () => {
     console.log('exit')
     process.exit()
