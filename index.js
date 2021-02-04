@@ -283,7 +283,7 @@ const updateManagerTitle = () =>{
 }
 
 const readAllRoles = () =>{
-  let queryByRoles = 'SELECT department.id, department.department, role.title, role.department FROM department LEFT JOIN role ON department.id = role.department_id;'
+  let queryByRoles = 'SELECT employee.id, employee.first_name, employee.last_name,role.title, department.department FROM role LEFT JOIN employee ON role.id = employee.role_id LEFT JOIN department ON department.id =role.department_id;'
   connection.query(queryByRoles, (err, results)=>{
       if(err)throw err
       console.table(results)
