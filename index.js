@@ -151,14 +151,8 @@ const addEmployee = () =>{
        message: "What is employee's manager ID?",
        type: "input"
 
-       },
+       }
 
-     { name: "manager",
-     message: "Who is employee's manager?",
-     type: "list",
-     choices:["None", "David Allen", "Ashley Judd", "Robert Rodrigez"]
-
-      }
 
      ]).then(answer =>
 
@@ -168,8 +162,8 @@ const addEmployee = () =>{
           { first_name: answer.firstName,
             last_name:answer.lastName,
             role_id:answer.roleId,
-            manager_id:answer.mangerId,
-            manager:answer.manager},(err)=>{
+            manager_id:answer.mangerId
+            },(err)=>{
                      if (err) throw err
                      readEmployeeInfo();
                         intro();
