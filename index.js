@@ -165,9 +165,9 @@ const addEmployee = () =>{
         {  
     
           connection.query("INSERT INTO employee SET ?",
-          {first_name: answer.firstName,
-            last_name: answer.lastName,
-              role_id:answer.roleId,
+          { first_name: answer.firstName,
+            last_name:answer.lastName,
+            role_id:answer.roleId,
             manager_id:answer.mangerId,
             manager:answer.manager},(err)=>{
                      if (err) throw err
