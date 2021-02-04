@@ -182,9 +182,7 @@ const removeEmployee = () =>{
           type:'input',
           message: 'What is employee\'s ID you would like to remove?'
 
-        },
-
-       
+        }      
 
     ]).then(answer =>{
             connection.query('DELETE FROM employee WHERE ?',
@@ -207,20 +205,22 @@ const updateEmployeeRole = () =>{
         },
         {
             name: 'title', 
-            type: 'input',
-            message:'Please enter new title'
+            type: 'list',
+            message:'Please choose title',
+            choices:['Software Engineer', 'Lead Engineer'
+                     ,'Salesperson','Sales Lead','Lawyer','Legal Lead']
         }    
-       ]).then(updateInfo=>{
+       ]).then(answer=>{
            connection.query('UPDATE role SET ? WHERE?',[
                { 
-                title: updateInfo.title
+                title: answer.title
                },
                {
-                 id: updateInfo.id  
+                 id: answer.id  
                }], 
                (err, results)=>{
                   if(err) throw err
-                  console.table(results)
+                 readAllEmployee();
                   intro();
                })
         })
@@ -291,6 +291,8 @@ const readAllRoles = () =>{
   })
 
 }
+
+// View the total utilized budget of a department -- ie the combined salaries of all employees in that department
 
 const exit = () => {
    connection.end();
