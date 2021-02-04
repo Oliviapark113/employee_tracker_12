@@ -210,7 +210,7 @@ const updateEmployeeRole = () => {
     inquirer.prompt([{
         name: 'id',
         type: 'input',
-        message: 'Please enter id number that you would like to update title'
+        message: 'Please enter role id number that you would like to update title'
     },
     {
         name: 'title',
@@ -235,10 +235,8 @@ const updateEmployeeRole = () => {
     }
 
     ]).then(answer => {
+
         connection.query('UPDATE role SET ? WHERE?', [
-            {
-                 id: answer.id
-            },
             {
                 title: answer.title
             },
@@ -248,70 +246,74 @@ const updateEmployeeRole = () => {
 
             {
                 department_id: answer.department_id
+            },
+
+            {
+                id: answer.id
             }
            ],
             (err, results) => {
                 if (err) throw err
-                readAllEmployee();
+                readAllRoles();
                 intro();
             })
     })
 }
 
 
-const updateEmployeeManager = () => {
-    inquirer.prompt([{
-        name: 'action',
-        type: 'list',
-        message: 'What would you like to update for Manager',
-        choices: ['Title', 'Salary']
+// const updateEmployeeManager = () => {
+//     inquirer.prompt([{
+//         name: 'action',
+//         type: 'list',
+//         message: 'What would you like to update for Manager',
+//         choices: ['Title', 'Salary']
 
-    }
+//     }
 
-    ]).then(selection => {
-        if (selection.action === 'Title') {
-            updateManagerTitle();
-        }
-        else if (selection.action === 'Salary') {
-            updateManagerSalary();
-        }
+//     ]).then(selection => {
+//         if (selection.action === 'Title') {
+//             updateManagerTitle();
+//         }
+//         else if (selection.action === 'Salary') {
+//             updateManagerSalary();
+//         }
 
-    })
+//     })
 
-}
+// }
 
-const updateManagerTitle = () => {
-    inquirer.prompt([
-        {
-            name: 'id',
-            type: 'input',
-            message: 'Please enter manager\'s id'
-        },
+// const updateManagerTitle = () => {
+//     inquirer.prompt([
+//         {
+//             name: 'id',
+//             type: 'input',
+//             message: 'Please enter manager\'s id'
+//         },
 
-        {
-            name: 'title',
-            type: 'input',
-            message: 'What is the new Title for Manager'
-        }
-    ]).then(answer => {
-        connection.query('UPDATE role SET ? WHERE?', [
-            {
-                title: answer.title
-            },
-            {
-                id: answer.id
-            }],
-            (err, results) => {
-                if (err) throw err
-                console.table(results)
-                intro();
-            })
-    })
+//         {
+//             name: 'title',
+//             type: 'input',
+//             message: 'What is the new Title for Manager'
+//         }
+//     ]).then(answer => {
+//         connection.query('UPDATE role SET ? WHERE?', [
+//             {
+//                 title: answer.title
+//             },
+//             {
+//                 id: answer.id
+//             }],
+//             (err, results) => {
+//                 if (err) throw err
+//                 console.table(results)
+//                 intro();
+//             })
+//     })
 
-}
+// }
 
 const readAllRoles = () => {
-    let queryByRoles = 'SELECT employee.id, employee.first_name, employee.last_name,role.title, department.department FROM role LEFT JOIN employee ON role.id = employee.role_id LEFT JOIN department ON department.id =role.department_id;'
+    let queryByRoles = 'SELECT employee.id, employee.first_name, employee.last_name,role.title, department.department, role.department_id FROM role LEFT JOIN employee ON role.id = employee.role_id LEFT JOIN department ON department.id =role.department_id;'
     connection.query(queryByRoles, (err, results) => {
         if (err) throw err
         console.table(results)

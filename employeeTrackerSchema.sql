@@ -82,21 +82,31 @@ VALUES ('Leal Lead', 235000, 3);
 INSERT INTO employee (first_name, last_name, role_id)
 VALUES('Robert', 'Rodrigez', 8);
 
+INSERT INTO department (name) VALUES ('John Jake');
+INSERT INTO role (title, salary, department_id ) 
+VALUES ('Salesperson', 65000, 2);
+INSERT INTO employee (first_name, last_name, role_id)
+VALUES('John', 'Jake', 10);
+UPDATE employee set role_id = 13 WHERE id =25;
+UPDATE employee set id = 13 WHERE role_id =13;
+UPDATE employee set manager_id = 2 WHERE role_id =13;
 
 UPDATE employee set manager = 'David Allen' WHERE manager_id =3;
 UPDATE employee set manager = 'Ashley Judd' WHERE manager_id =7;
 UPDATE employee set manager = 'Robert Rodrigez' WHERE manager_id =8;
 
+UPDATE  role set title = 'Lawyer', salary=85000 , department_id =3 WHERE id =13;
+
 
 -- readAll employee
 SELECT employee.id, employee.first_name, employee.last_name,
-role.title,department.department,role.salary, employee.manager
+role.title,department.department,role.salary
 FROM employee
 LEFT JOIN role ON role.id = employee.role_id
 LEFT JOIN department ON department.id = role.department_id;
 
 -- readAllemloyee by Department
-SELECT employee.id, employee.first_name, employee.last_name, role.title, department.name
+SELECT employee.id, employee.first_name, employee.last_name, role.title, department.department
 FROM employee
 LEFT JOIN role ON role.id = employee.id 
 LEFT JOIN department ON department.id = role.department_id WHERE department.department = 'Engineering';
@@ -106,7 +116,7 @@ LEFT JOIN department ON department.id = role.department_id WHERE department.depa
 SELECT * FROM employee WHERE  manager_id IS null OR role_id = 7;
 
 -- -- readAllroles  .. 
-SELECT department.id, department.name, role.title, 
+SELECT department.id, department.department, role.title, 
 role.department 
 FROM department
 LEFT JOIN 
@@ -115,11 +125,13 @@ role ON department.id = role.department_id;
 -- View the total utilized budget of a department 
 -- ie the combined salaries of all employees in that department
 
--- -- Right Join
-SELECT employee.id, employee.first_name, employee.last_name, employee.manager,
-role.title, role.department
+-- -- role Join
+SELECT employee.id, employee.first_name, employee.last_name,
+role.title, department.department, role.department_id
 FROM role
-RIGHT JOIN employee ON role.id = employee.role_id;
+LEFT JOIN employee ON role.id = employee.role_id
+LEFT JOIN department ON department.id =role.department_id;
+
 
 SELECT * FROM department; 
 SELECT * FROM role;
@@ -134,4 +146,19 @@ DELETE FROM employee WHERE first_name= 'Mary' AND last_name='Morgan';
 
 
 ALTER TABLE employee DROP COLUMN manager;
+
+-- View the total utilized budget of a department -- 
+-- ie the combined salaries of all employees in that department
+
+SELECT employee.id, employee.first_name, employee.last_name, 
+role.title, role.salary, department.department
+FROM employee
+LEFT JOIN role ON role.id = employee.id 
+LEFT JOIN department ON department.id = role.department_id 
+WHERE department.department = 'Engineering';
+
+SELECT SUM(salary) AS EngineeringBudget FROM role WHERE department_id=1;
+SELECT SUM(salary) AS SalesBudget FROM role WHERE department_id=2;
+SELECT SUM(salary) AS LegalBudget FROM role WHERE department_id=3;
+
 
