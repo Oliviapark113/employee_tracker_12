@@ -17,14 +17,14 @@ connection.connect(err => {
 
 })
 
-const choices = ["View All Employees",
+const choices = [
+    "View All Employees",
     "View Employees info",
     "View All Employees By Department",
     "View All Employees By Manager",
     "Add Employee",
     "Remove Employee",
     "Update Employee Role",
-    "Update Employee Manager",
     "View All Roles",
     "View Budget",
     "EXIT"
@@ -68,18 +68,14 @@ const intro = () => {
                 break;
 
             case choices[7]:
-                updateEmployeeManager();
-                break;
-
-            case choices[8]:
                 readAllRoles();
                 break;
 
-            case choices[9]:
+            case choices[8]:
                 readBudget();
                 break;
 
-            case choices[10]:
+            case choices[9]:
                 exit();
                 break;
         }
@@ -207,12 +203,12 @@ const removeEmployee = () => {
 }
 
 const updateEmployeeRole = () => {
-
+    let roleArry; 
 //  1. Inside updateEmployee make a call to the database to get all the employees
 // 2. map over those employees, creating an array of objects with their names and ids
 connection.query('SELECT * FROM employee',(err, results)=>{
             if(err) throw err                         
-           const employeeArry = results.map(result=>{
+          let employeeArry = results.map(result=>{
             console.log(result.first_name +" "+result.last_name, result.id)
 
               return {name: result.first_name +" "+result.last_name,
@@ -221,10 +217,11 @@ connection.query('SELECT * FROM employee',(err, results)=>{
            })
              console.log(employeeArry)              
 // 3. make another call to get all the roles that exist in your database
-// 4. map over the roles returned, creating an array of objects with the title and ids  
+// 4. map over the roles returned, creating an array of objects with the title and ids 
+  
     connection.query('SELECT * FROM role', (err, results)=>{
         if(err) throw err                         
-        const roleArry = results.map(result=>{
+         roleArry = results.map(result=>{
          console.log(result.title, result.id)
 
            return {title: result.title,
@@ -232,129 +229,49 @@ connection.query('SELECT * FROM employee',(err, results)=>{
 
         })
           console.log(roleArry)  
-
-
-    }) 
-
-
-   
-})
-
-
 // 5. prompt the user to choose an employee, using the new employees array as their choices
 // 6. prompt the user to choose the new role, using the roles array as the choices
-// 7. Use the ids from both choices to update the database
 
-// you query the data base to get your employees, so the user can choose which user to update
-// 10:36
-// and you query the roles, so the user knows which role to update to
-    // inquirer.prompt([{
-    //     name: 'id',
-    //     type: 'input',
-    //     message: 'Please enter role id number that you would like to update title'
-    // },
-    // {
-    //     name: 'title',
-    //     type: 'list',
-    //     message: 'Please choose title',
-    //     choices: ['Software Engineer', 'Lead Engineer'
-    //         , 'Salesperson', 'Sales Lead', 'Lawyer', 'Legal Lead']
-    // },
+inquirer.prompt([
+    { name: "name",
+       type: "list",
+       message:"Please choose employee name you would like to update",
+       choices: employeeArry
+    //    choices:['Olivia Park','Chris Brown','David Allen',
+    //    'Jake.Lau','Kevin Tupic','Jason Brown','Ashley Judd','Robert Rodrigez','John Jake' ]
 
-    // {
-    //     name: 'salary',
-    //     type: 'input',
-    //     message: 'Please enter updated salary',
-       
-    // },
+    },
+{   name: "newTitle",
+    type: "list",
+    message: "Please choose new title for employee",
+    choices: roleArry
+    // choices:['Sales Lead','Salesperson','Software Engineer',
+    //   'Lead Engineer','Lawyer','Legal Lead']
 
-    // {
-    //     name: 'department_id',
-    //     type: 'input',
-    //     message: 'Please enter updated department_id',
-       
-    // }
+}
 
-    // ]).then(answer => {
+]).then(answer =>{
+    // 7. Use the ids from both choices to update the database
+    connection.query('UPDATE role SET ? WHERE?', [{ title:answer.newTitle},
+                                                   {id:roleArry.id || employeeArry.id }], (err)=>{
+           if(err) throw err
+           readAllRoles()
+           intro()
+        })
 
-    //     connection.query('UPDATE role SET ? WHERE?', [
-    //         {
-    //             title: answer.title
-    //         },
-    //         {
-    //             salary: answer.salary
-    //         },
+     })
 
-    //         {
-    //           department_id: answer.department_id
-    //         },
+  }) 
 
-    //         {
-    //             id: answer.id
-    //         }
-    //        ],
-    //         (err, results) => {
-    //             if (err) throw err
-    //             readAllRoles();
-    //             intro();
-    //         })
-    // })
+})
+
+// you query the data base to get your employees, so the user can choose which user to update       
+
 }
 
 
-// const updateEmployeeManager = () => {
-//     inquirer.prompt([{
-//         name: 'action',
-//         type: 'list',
-//         message: 'What would you like to update for Manager',
-//         choices: ['Title', 'Salary']
-
-//     }
-
-//     ]).then(selection => {
-//         if (selection.action === 'Title') {
-//             updateManagerTitle();
-//         }
-//         else if (selection.action === 'Salary') {
-//             updateManagerSalary();
-//         }
-
-//     })
-
-// }
-
-// const updateManagerTitle = () => {
-//     inquirer.prompt([
-//         {
-//             name: 'id',
-//             type: 'input',
-//             message: 'Please enter manager\'s id'
-//         },
-
-//         {
-//             name: 'title',
-//             type: 'input',
-//             message: 'What is the new Title for Manager'
-//         }
-//     ]).then(answer => {
-//         connection.query('UPDATE role SET ? WHERE?', [
-//             {
-//                 title: answer.title
-//             },
-//             {
-//                 id: answer.id
-//             }],
-//             (err, results) => {
-//                 if (err) throw err
-//                 console.table(results)
-//                 intro();
-//             })
-//     })
-
-// }
-
 const readAllRoles = () => {
-    let queryByRoles = 'SELECT employee.id, employee.first_name, employee.last_name,role.title, department.department, role.department_id FROM role LEFT JOIN employee ON role.id = employee.role_id LEFT JOIN department ON department.id =role.department_id;'
+    let queryByRoles = 'SELECT employee.id, employee.first_name, employee.last_name,role.title, department.department FROM role LEFT JOIN employee ON role.id = employee.role_id LEFT JOIN department ON department.id =role.department_id;'
     connection.query(queryByRoles, (err, results) => {
         if (err) throw err
         console.table(results)
