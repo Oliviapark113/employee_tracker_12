@@ -207,57 +207,98 @@ const removeEmployee = () => {
 }
 
 const updateEmployeeRole = () => {
-    inquirer.prompt([{
-        name: 'id',
-        type: 'input',
-        message: 'Please enter role id number that you would like to update title'
-    },
-    {
-        name: 'title',
-        type: 'list',
-        message: 'Please choose title',
-        choices: ['Software Engineer', 'Lead Engineer'
-            , 'Salesperson', 'Sales Lead', 'Lawyer', 'Legal Lead']
-    },
 
-    {
-        name: 'salary',
-        type: 'input',
-        message: 'Please enter updated salary',
+//  1. Inside updateEmployee make a call to the database to get all the employees
+// 2. map over those employees, creating an array of objects with their names and ids
+connection.query('SELECT * FROM employee',(err, results)=>{
+            if(err) throw err                         
+           const employeeArry = results.map(result=>{
+            console.log(result.first_name +" "+result.last_name, result.id)
+
+              return {name: result.first_name +" "+result.last_name,
+               id: result.id}
+
+           })
+             console.log(employeeArry)              
+// 3. make another call to get all the roles that exist in your database
+// 4. map over the roles returned, creating an array of objects with the title and ids  
+    connection.query('SELECT * FROM role', (err, results)=>{
+        if(err) throw err                         
+        const roleArry = results.map(result=>{
+         console.log(result.title, result.id)
+
+           return {title: result.title,
+                      id: result.id}
+
+        })
+          console.log(roleArry)  
+
+
+    }) 
+
+
+   
+})
+
+
+// 5. prompt the user to choose an employee, using the new employees array as their choices
+// 6. prompt the user to choose the new role, using the roles array as the choices
+// 7. Use the ids from both choices to update the database
+
+// you query the data base to get your employees, so the user can choose which user to update
+// 10:36
+// and you query the roles, so the user knows which role to update to
+    // inquirer.prompt([{
+    //     name: 'id',
+    //     type: 'input',
+    //     message: 'Please enter role id number that you would like to update title'
+    // },
+    // {
+    //     name: 'title',
+    //     type: 'list',
+    //     message: 'Please choose title',
+    //     choices: ['Software Engineer', 'Lead Engineer'
+    //         , 'Salesperson', 'Sales Lead', 'Lawyer', 'Legal Lead']
+    // },
+
+    // {
+    //     name: 'salary',
+    //     type: 'input',
+    //     message: 'Please enter updated salary',
        
-    },
+    // },
 
-    {
-        name: 'department_id',
-        type: 'input',
-        message: 'Please enter updated department_id',
+    // {
+    //     name: 'department_id',
+    //     type: 'input',
+    //     message: 'Please enter updated department_id',
        
-    }
+    // }
 
-    ]).then(answer => {
+    // ]).then(answer => {
 
-        connection.query('UPDATE role SET ? WHERE?', [
-            {
-                title: answer.title
-            },
-            {
-                salary: answer.salary
-            },
+    //     connection.query('UPDATE role SET ? WHERE?', [
+    //         {
+    //             title: answer.title
+    //         },
+    //         {
+    //             salary: answer.salary
+    //         },
 
-            {
-                department_id: answer.department_id
-            },
+    //         {
+    //           department_id: answer.department_id
+    //         },
 
-            {
-                id: answer.id
-            }
-           ],
-            (err, results) => {
-                if (err) throw err
-                readAllRoles();
-                intro();
-            })
-    })
+    //         {
+    //             id: answer.id
+    //         }
+    //        ],
+    //         (err, results) => {
+    //             if (err) throw err
+    //             readAllRoles();
+    //             intro();
+    //         })
+    // })
 }
 
 
