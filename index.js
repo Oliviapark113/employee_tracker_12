@@ -18,6 +18,7 @@ connection.connect(err=>{
 })
 
     const choices =[ "View All Employees",
+                     "View Employees info",
                      "View All Employees By Department",
                      "View All Employees By Manager",
                      "Add Employee",
@@ -42,34 +43,38 @@ const intro = () =>{
                 break;
 
                 case choices[1]:
+                readEmployeeInfo();
+                break;
+
+                case choices[2]:
                 readAllEmployeeByDept();
                 break;
 
-                case choices[2] :
+                case choices[3] :
                 readAllManager();
                 break;
 
-                case choices[3]:
+                case choices[4]:
                 addEmployee();
                 break;
 
-                case choices[4]:
+                case choices[5]:
                 removeEmployee();
                 break;
 
-                case choices[5]:
+                case choices[6]:
                 updateEmployeeRole();
                 break;
 
-                case choices[6]:
+                case choices[7]:
                 updateEmployeeManager();
                 break;
 
-                case choices[7]:
+                case choices[8]:
                     readAllRoles();
                     break;
 
-                 case choices[8]:
+                 case choices[9]:
                         exit();
                         break;
             }   
@@ -86,6 +91,15 @@ const readAllEmployee =()=>{
     })
 }
 
+const readEmployeeInfo =()=>{
+    let queryInfo = 'SELECT * FROM employee;'
+
+    connection.query(queryInfo, (err,results)=>{
+        if(err) throw err
+        console.table(results)
+        intro();
+    })
+}
 
 const readAllEmployeeByDept = ()=>{
     inquirer.prompt([{
@@ -128,33 +142,44 @@ const addEmployee = () =>{
          message:"What employee's last name?"
        },
 
-       { name: "role",
-         type:"list",
-         message:"What employee's role?",
-         choices: ["Software Engineer", "Lead Engineer", "Salesperson","Sales Lead","Lawyer","Legal Lead"]
+       { name: "roleId",
+         type:"input",
+         message:"What employee's role ID?",
        },
 
-       { name: "manager",
-         message: "Who is employee's manager?",
-         type: "list",
-         choices:["None", "David Allen", "Ashley Judd", "Robert Rodrigez"]
+       { name: "managerId",
+       message: "What is employee's manager ID?",
+       type: "input"
 
-       }
+       },
+
+     { name: "manager",
+     message: "Who is employee's manager?",
+     type: "list",
+     choices:["None", "David Allen", "Ashley Judd", "Robert Rodrigez"]
+
+      }
 
      ]).then(answer =>
-        {  connection.query("INSERT INTO employee SET ?",
+
+        {  
+    
+          connection.query("INSERT INTO employee SET ?",
           {first_name: answer.firstName,
             last_name: answer.lastName,
+              role_id:answer.roleId,
+            manager_id:answer.mangerId,
             manager:answer.manager},(err)=>{
                      if (err) throw err
-                    readAllEmployee()
-                    intro()
+                     readEmployeeInfo();
+                        intro();
                
         }
     )
 })
 }
 
+ 
 const removeEmployee = () =>{
 
     inquirer.prompt([
@@ -171,15 +196,16 @@ const removeEmployee = () =>{
         }
 
     ]).then(answer =>{
-            connection.query('DELETE FROM employee WHERE ?',
-            [{first_name:answer.firstName,last_name:answer.lastName}],
+            connection.query('DELETE FROM employee WHERE first_name=? AND last_name=?',
+            [answer.firstName,answer.lastName],
             (err, results)=>{
                 if(err) throw err
                 console.table(results)
-                  readAllEmployee();
+                  readEmployeeInfo();
                   intro();
                 })
         })
+
 }
 
 const updateEmployeeRole = () =>{
