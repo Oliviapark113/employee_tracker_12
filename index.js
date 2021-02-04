@@ -26,6 +26,7 @@ connection.connect(err=>{
                      "Update Employee Role",
                      "Update Employee Manager",
                      "View All Roles",
+                     "View Budget",
                      "EXIT"
                     ]
 
@@ -64,7 +65,7 @@ const intro = () =>{
 
                 case choices[6]:
                 updateEmployeeRole();
-                break;
+                     break;
 
                 case choices[7]:
                 updateEmployeeManager();
@@ -74,7 +75,11 @@ const intro = () =>{
                     readAllRoles();
                     break;
 
-                 case choices[9]:
+                case choices[9]:
+                    readBudget();
+                    break;
+
+                 case choices[10]:
                         exit();
                         break;
             }   
@@ -289,6 +294,34 @@ const readAllRoles = () =>{
       console.table(results)
       intro()
   })
+
+}
+
+const readBudget = ()=>{
+    inquirer.prompt([{
+        name: 'budget',
+        type:'list',
+        choices: ['Engineering', 'Sales','Legal'],
+        message: 'Please select department that you would like to see Budget'
+    },
+
+    {
+        name: 'id',
+        type:'input',
+        message: 'Please enter department id to view Budget'
+    },
+]).then(answer =>{
+    let queryByBudget ='SELECT SUM(salary) FROM role WHERE ?;'
+    connection.query(queryByBudget, {department_id: answer.id},(err,result)=>{
+          if(err)throw err
+          console.table(result)
+          intro()
+
+    })
+
+
+})
+
 
 }
 
