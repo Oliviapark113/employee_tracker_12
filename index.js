@@ -82,7 +82,7 @@ const intro = () =>{
 }
 
 const readAllEmployee =()=>{
-    let query = 'SELECT employee.id, employee.first_name, employee.last_name,role.title,department.department,role.salary, employee.manager FROM employee LEFT JOIN role ON role.id = employee.role_id LEFT JOIN department ON department.id = role.department_id;'
+    let query = 'SELECT employee.id, employee.first_name, employee.last_name,role.title,department.department,role.salary FROM employee LEFT JOIN role ON role.id = employee.role_id LEFT JOIN department ON department.id = role.department_id;'
 
     connection.query(query, (err,results)=>{
         if(err) throw err
@@ -162,12 +162,13 @@ const addEmployee = () =>{
           { first_name: answer.firstName,
             last_name:answer.lastName,
             role_id:answer.roleId,
-            manager_id:answer.mangerId
+            manager_id:answer.managerId
+            
             },(err)=>{
                      if (err) throw err
                      readEmployeeInfo();
                         intro();
-               
+               console.log(answer.mangerId)
         }
     )
 })
@@ -177,21 +178,17 @@ const addEmployee = () =>{
 const removeEmployee = () =>{
 
     inquirer.prompt([
-        { name: 'firstName',
+        { name: 'id',
           type:'input',
-          message: 'What is first name of employee you would like to remove?'
+          message: 'What is employee\'s ID you would like to remove?'
 
         },
 
-        { name: 'lastName',
-          type:'input',
-          message: 'What is last name of employee you would like to remove?'
-
-        }
+       
 
     ]).then(answer =>{
-            connection.query('DELETE FROM employee WHERE first_name=? AND last_name=?',
-            [answer.firstName,answer.lastName],
+            connection.query('DELETE FROM employee WHERE ?',
+            {id:answer.id},
             (err, results)=>{
                 if(err) throw err
                 console.table(results)

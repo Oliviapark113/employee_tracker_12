@@ -29,8 +29,6 @@ CREATE TABLE employee(
   first_name VARCHAR (30) NOT NULL,
   last_name VARCHAR (30) NOT NULL,
   role_id INT(10),
--- INT to hold reference to another employee that manages the employee being Created. 
--- This field may be null if the employee has no manager
   manager_id INT(10),
   PRIMARY KEY (id)
 );
@@ -132,15 +130,8 @@ ALTER TABLE department RENAME COLUMN name TO department;
 INSERT INTO employee (first_name, last_name, role_id, manager_id)
 VALUES('James', 'Lau', 9, 7);
 
-UPDATE role SET title = 'Legal Lead' WHERE id=8;
+DELETE FROM employee WHERE first_name= 'Mary' AND last_name='Morgan';
 
-UPDATE employee SET role_id = 10 WHERE id=13;
-UPDATE employee SET manager_id = 7 WHERE id=13;
 
-UPDATE employee SET role_id = 11 WHERE id=14;
-UPDATE employee SET manager_id = 8 WHERE id=14;
+ALTER TABLE employee DROP COLUMN manager;
 
-UPDATE employee SET role_id = 12 WHERE id=15;
-UPDATE employee SET manager_id = 3 WHERE id=16;
-
-UPDATE employee SET manager_id = 3 WHERE id=15;
