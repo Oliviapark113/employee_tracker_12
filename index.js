@@ -122,7 +122,7 @@ const readAllEmployeeByDept = () => {
 }
 
 const readAllManager = () => {
-    let queryByManager = 'SELECT * FROM employee WHERE  manager_id IS null OR role_id = 7;'
+    let queryByManager = 'SELECT * FROM employee WHERE  manager_id IS null;'
     connection.query(queryByManager, (err, results) => {
         if (err) throw err
         console.table(results)
@@ -131,6 +131,7 @@ const readAllManager = () => {
 }
 
 const addEmployee = () => {
+
     inquirer.prompt([
 
         {
@@ -203,9 +204,7 @@ const removeEmployee = () => {
 }
 
 const updateEmployeeRole = () => {
-    let roleArry; 
-//  1. Inside updateEmployee make a call to the database to get all the employees
-// 2. map over those employees, creating an array of objects with their names and ids
+
 connection.query('SELECT * FROM employee',(err, results)=>{
             if(err) throw err                         
           let employeeArry = results.map(result=>{
@@ -216,56 +215,55 @@ connection.query('SELECT * FROM employee',(err, results)=>{
 
            })
              console.log(employeeArry)              
-// 3. make another call to get all the roles that exist in your database
-// 4. map over the roles returned, creating an array of objects with the title and ids 
-  
-    connection.query('SELECT * FROM role', (err, results)=>{
-        if(err) throw err                         
-         roleArry = results.map(result=>{
-         console.log(result.title, result.id)
 
-           return {title: result.title,
-                      id: result.id}
-
-        })
-          console.log(roleArry)  
-// 5. prompt the user to choose an employee, using the new employees array as their choices
-// 6. prompt the user to choose the new role, using the roles array as the choices
 
 inquirer.prompt([
-    { name: "name",
-       type: "list",
-       message:"Please choose employee name you would like to update",
-       choices: employeeArry
-    //    choices:['Olivia Park','Chris Brown','David Allen',
-    //    'Jake.Lau','Kevin Tupic','Jason Brown','Ashley Judd','Robert Rodrigez','John Jake' ]
+    {
+        name: "name",
+        type: "list",
+        message: "Please choose employee name you would like to update",
+        choices: employeeArry
 
     },
-{   name: "newTitle",
-    type: "list",
-    message: "Please choose new title for employee",
-    choices: roleArry
-    // choices:['Sales Lead','Salesperson','Software Engineer',
-    //   'Lead Engineer','Lawyer','Legal Lead']
 
-}
+    {
+        name: "id",
+        type: "input",
+        message: "Please choose employee id",
+
+    },
+    {
+        name: "title",
+        type: "list",
+        message: "Please choose new title for employee",
+        choices: ['Sales Lead', 'Salesperson', 'Software Engineer',
+            'Lead Engineer', 'Lawyer', 'Legal Lead']
+
+    },
+
+    {
+        name: "department_id",
+        type: "list",
+        message: "Please choose new department id",
+        choices: [1, 2, 3]
+
+    }
 
 ]).then(answer =>{
     // 7. Use the ids from both choices to update the database
-    connection.query('UPDATE role SET ? WHERE?', [{ title:answer.newTitle},
-                                                   {id:roleArry.id || employeeArry.id }], (err)=>{
+    connection.query('UPDATE role SET ? WHERE?', [{ title:answer.title},
+                                            {department_id: answer.department_id},
+                                        {id:answer.id}], (err)=>{
            if(err) throw err
+         
            readAllRoles()
            intro()
         })
 
      })
 
-  }) 
-
 })
-
-// you query the data base to get your employees, so the user can choose which user to update       
+      
 
 }
 
