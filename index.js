@@ -150,10 +150,15 @@ const addEmployee = () => {
                   if(element.manager_id === null){
                       managerArry.push(`${element.first_name} ${element.last_name}`)
                   }
-                  else if(!element.manager_id){
-                         managerArry.push("None")
+                  else if(element.manager_id){
+                      if(managerArry.includes(null)){
+                          return false
+                      }
+                        managerArry.push(null)
+                        return true
                      }
             })
+            console.log(managerArry)
 
             let managerIdArry =[]
             results.filter(element=>{
