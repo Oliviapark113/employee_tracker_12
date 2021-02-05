@@ -106,7 +106,7 @@ const readAllEmployeeByDept = () => {
     inquirer.prompt([{
         name: 'department',
         type: 'list',
-        choices: ['Engineering', 'Sales', 'Legal']
+        choices: ['Engineering', 'Sales', 'Legal', 'Finance']
     }]).then(answer => {
         let queryByDept = 'SELECT employee.id, employee.first_name, employee.last_name, role.title,department.department FROM employee LEFT JOIN role ON role.id = employee.id LEFT JOIN department ON department.id = role.department_id WHERE ?;'
 
@@ -122,7 +122,7 @@ const readAllEmployeeByDept = () => {
 }
 
 const readAllManager = () => {
-    let queryByManager = 'SELECT * FROM employee WHERE  manager_id IS null;'
+    let queryByManager = 'SELECT  FROM employee WHERE  manager_id IS null;'
     connection.query(queryByManager, (err, results) => {
         if (err) throw err
         console.table(results)
@@ -131,55 +131,104 @@ const readAllManager = () => {
 }
 
 const addEmployee = () => {
-
-    inquirer.prompt([
-
-        {
-            name: "firstName",
-            type: "input",
-            message: "What employee's first name?"
-        },
-
-        {
-            name: "lastName",
-            type: "input",
-            message: "What employee's last name?"
-        },
-
-        {
-            name: "roleId",
-            type: "input",
-            message: "What employee's role ID?",
-        },
-
-        {
-            name: "managerId",
-            message: "What is employee's manager ID?",
-            type: "input"
-
-        }
-
-
-    ]).then(answer => {
-
-        connection.query("INSERT INTO employee SET ?",
-            {
-                first_name: answer.firstName,
-                last_name: answer.lastName,
-                role_id: answer.roleId,
-                manager_id: answer.managerId
-
-            }, (err) => {
-                if (err) throw err
-                readEmployeeInfo();
-                intro();
-                console.log(answer.mangerId)
+    connection.query('SELECT id , title FROM role', (err, results) => {
+        if (err) throw err
+        let rollArry = []
+        results.filter(element => {
+            if (rollArry.includes(element.title)) {
+                return false;
             }
-        )
+            rollArry.push(element.title)
+            return true
+
+        })
+        connection.query('SELECT manager_id,id,first_name,last_name FROM employee', (err, results) => {
+            if (err) throw err
+            let managerArry = []
+           
+             results.filter(element=>{
+                  if(element.manager_id === null){
+                      managerArry.push(`${element.first_name} ${element.last_name}`)
+                  }
+                  else if(!element.manager_id){
+                         managerArry.push("None")
+                     }
+            })
+
+            let managerIdArry =[]
+            results.filter(element=>{
+                let managerId = element.manager_id
+               
+                if(managerIdArry.includes(managerId))
+                    {return false}
+                managerIdArry.push(managerId)
+                return true
+            
+            })
+            console.log(managerIdArry)
+            inquirer.prompt([
+                {
+                    name: "firstName",
+                    type: "input",
+                    message: "What employee's first name?"
+                },
+                {
+                    name: "lastName",
+                    type: "input",
+                    message: "What employee's last name?"
+                },
+                {
+                    name: "title",
+                    type: "list",
+                    message: "What is employee\'s role",
+                    choices: rollArry
+                },
+                {
+                    name: "manager",
+                    message: "Who is employee's manager?",
+                    type: "list",
+                    choices: managerArry
+                },
+
+                {
+                    name: "managerId",
+                    message: "What is your manager ID?",
+                    type: "list",
+                    choices: managerIdArry
+                 
+                },
+
+                {
+                    name: "roleId",
+                    message: "Who is employee's role ID?",
+                    type: "input"
+                }
+
+
+
+            ]).then(answer => {
+                connection.query("INSERT INTO employee SET ?",
+
+
+                    {
+                        first_name: answer.firstName,
+                        last_name: answer.lastName,
+                        role_id: answer.roleId,
+                        manager_id: answer.managerId
+
+                    }, (err) => {
+                        if (err) throw err
+                        readEmployeeInfo();
+                        intro();
+                    })
+            })
+    
+        })
+        
     })
-}
 
-
+ }      
+ 
 
 const removeEmployee = () =>{
 
@@ -211,10 +260,9 @@ const removeEmployee = () =>{
                 intro();
             })
 
-      })  
-        
+      })          
     
-        })
+ })
 
 }
 

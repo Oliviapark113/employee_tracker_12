@@ -7,7 +7,7 @@ USE employeeTracker_db;
 CREATE TABLE department (
 id INT NOT NULL AUTO_INCREMENT,
 -- to hold department name
-name VARCHAR(30) NOT NULL,
+department VARCHAR(30) NOT NULL,
 PRIMARY KEY (id)
 
 );
@@ -20,23 +20,31 @@ title VARCHAR(30) NOT NULL,
 salary DECIMAL(10,2) NOT NULL,
 -- INT to hold reference to department role belongs to
 department_id INT(10),
+FOREIGN KEY (department_id) REFERENCES department(id),
 PRIMARY KEY (id)
-
 );
+
 
 CREATE TABLE employee(
   id INT NOT NULL AUTO_INCREMENT,
   first_name VARCHAR (30) NOT NULL,
   last_name VARCHAR (30) NOT NULL,
   role_id INT(10),
+-- INT to hold reference to role employee has 
+  FOREIGN KEY (role_id) REFERENCES role(id),
+-- INT to hold reference to another employee that manages the employee being Created. 
+-- This field may be null if the employee has no manager
   manager_id INT(10),
+  FOREIGN KEY(role_id) REFERENCES employee(id),
   PRIMARY KEY (id)
+  
 );
 
 
 INSERT INTO department (department) VALUES ('Engineering');
 INSERT INTO department (department) VALUES ('Sales');
 INSERT INTO department (department) VALUES ('Legal');
+INSERT INTO department (department) VALUES ('Finance');
 
 INSERT INTO role (title, salary, department_id ) 
 VALUES ('Software Engineer', 95000, 1);
@@ -56,13 +64,16 @@ INSERT INTO role (title, salary, department_id )
 VALUES ('Leal Lead', 135000, 3);
 INSERT INTO role (title, salary, department_id ) 
 VALUES ('Legal Assitant', 65000, 3);
-
 INSERT INTO role (title, salary, department_id ) 
 VALUES ('Software Engineer', 75000, 1);
 INSERT INTO role (title, salary, department_id ) 
 VALUES ('Salesperson', 70000, 2);
 INSERT INTO role (title, salary, department_id ) 
 VALUES ('Legal Assistant', 60000, 3);
+INSERT INTO role (title, salary, department_id ) 
+VALUES ('Accountant', 75000, 4);
+INSERT INTO role (title, salary, department_id ) 
+VALUES ('Lead Accountant', 125000, 4);
 
 INSERT INTO employee (first_name, last_name, role_id, manager_id)
 VALUES('Olivia', 'Park', 1, 3);
@@ -88,6 +99,10 @@ INSERT INTO employee (first_name, last_name, role_id, manager_id)
 VALUES('Tim', 'Alex', 11, 6);
 INSERT INTO employee (first_name, last_name, role_id,manager_id)
 VALUES('Emma', 'Thompson', 12, 8);
+INSERT INTO employee (first_name, last_name, role_id,manager_id)
+VALUES('Mike', 'Troy', 13, 14);
+INSERT INTO employee (first_name, last_name, role_id)
+VALUES('Peter', 'Maxwell', 14);
 
 
 -- readAll employee
@@ -118,6 +133,7 @@ SELECT * FROM department;
 SELECT * FROM role;
 SELECT * FROM employee; 
 
+
 ALTER TABLE department RENAME COLUMN name TO department;
 
 ALTER TABLE employee DROP COLUMN manager;
@@ -125,13 +141,14 @@ ALTER TABLE employee DROP COLUMN manager;
 -- View the total utilized budget of a department -- 
 -- ie the combined salaries of all employees in that department
 SELECT SUM(salary) AS EngineeringBudget FROM role WHERE department_id=1;
-SELECT SUM(salary) AS SalesBudget FROM role WHERE department_id=2;
-SELECT SUM(salary) AS LegalBudget FROM role WHERE department_id=3;
 
+-- TRUNCATE TABLE department; 
+-- TRUNCATE TABLE role;
+-- TRUNCATE TABLE employee; 
 
-TRUNCATE TABLE department; 
-TRUNCATE TABLE role;
-TRUNCATE TABLE employee; 
-
+DROP TABLE employee;
 SELECT e.*, CONCAT (m.first_name, ' ', m.last_name) AS manager FROM employee AS e
 LEFT JOIN employee AS m ON e.manager_id = m.id;
+
+UPDATE role SET title ='Legal Lead' WHERE id=8;
+UPDATE role SET title ='Legal Assistant' WHERE id=9;
