@@ -180,28 +180,47 @@ const addEmployee = () => {
 }
 
 
-const removeEmployee = () => {
 
-    inquirer.prompt([
-        {
-            name: 'id',
-            type: 'input',
-            message: 'What is employee\'s ID you would like to remove?'
+const removeEmployee = () =>{
 
-        }
+    connection.query('SELECT * FROM employee',(err, results)=>{
+        if(err) throw err                         
+        let employeeArry = results.map(result=>{
+          console.log(result.first_name +" "+result.last_name, result.id)
+    
+            return {name: result.first_name +" "+result.last_name,
+             value: result.id}
+    
+         })
+           console.log(employeeArry) 
 
-    ]).then(answer => {
-        connection.query('DELETE FROM employee WHERE ?',
-            { id: answer.id },
+        inquirer.prompt([{ 
+        name: "id",
+        type: "list",
+        message: "Please choose employee name you would like to remove",
+        choices: employeeArry
+        }     
+      ]).then(answer=>{
+          console.log(answer)
+          connection.query('DELETE FROM employee WHERE ?',
+            { id:answer.id},
             (err, results) => {
                 if (err) throw err
                 console.table(results)
                 readEmployeeInfo();
                 intro();
             })
-    })
+
+      })  
+        
+    
+        })
 
 }
+
+
+
+
 
 const updateEmployeeRole = () => {
 
@@ -237,7 +256,13 @@ inquirer.prompt([
         type: "list",
         message: "Please choose new title for employee",
         choices: ['Sales Lead', 'Salesperson', 'Software Engineer',
-            'Lead Engineer', 'Lawyer', 'Legal Lead']
+            'Lead Engineer', 'Lawyer', 'Legal Lead','Legal Assistant']
+
+    },
+    {
+        name: "salary",
+        type: "input",
+        message: "Please enter new salary"   
 
     },
 
@@ -250,19 +275,22 @@ inquirer.prompt([
     }
 
 ]).then(answer =>{
-    // 7. Use the ids from both choices to update the database
-    connection.query('UPDATE role SET ? WHERE?', [{ title:answer.title},
-                                            {department_id: answer.department_id},
-                                        {id:answer.id}], (err)=>{
-           if(err) throw err
-         
-           readAllRoles()
-           intro()
+  
+    connection.query('UPDATE role SET ? WHERE?', 
+        [{  title: answer.title,
+            salary: answer.salary,
+             department_id: answer.department_id,
+           },
+
+            { id: answer.id }], (err) => {
+                if (err) throw err
+                readAllRoles()
+                intro()
         })
 
      })
 
-})
+  })
       
 
 }

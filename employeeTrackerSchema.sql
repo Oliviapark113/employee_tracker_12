@@ -35,62 +35,59 @@ CREATE TABLE employee(
 
 
 INSERT INTO department (department) VALUES ('Engineering');
+INSERT INTO department (department) VALUES ('Sales');
+INSERT INTO department (department) VALUES ('Legal');
+
 INSERT INTO role (title, salary, department_id ) 
 VALUES ('Software Engineer', 95000, 1);
-INSERT INTO employee (first_name, last_name, role_id, manager_id)
-VALUES('Olivia', 'Park', 1, 3);
-
-INSERT INTO department (department) VALUES ('Engineering');
 INSERT INTO role (title, salary, department_id ) 
 VALUES ('Software Engineer', 85000, 1);
-INSERT INTO employee (first_name, last_name, role_id, manager_id)
-VALUES('Chris', 'Brown', 2, 3);
-
-INSERT INTO department (department) VALUES ('Engineering');
 INSERT INTO role (title, salary, department_id ) 
-VALUES ('Lead Engineer', 125000, 1);
-INSERT INTO employee (first_name, last_name, role_id)
-VALUES('David', 'Allen', 3);
-
-INSERT INTO department (department) VALUES ('Sales');
+VALUES ('Lead Engineer', 145000, 1);
 INSERT INTO role (title, salary, department_id ) 
 VALUES ('Salesperson', 75000, 2);
-INSERT INTO employee (first_name, last_name, role_id, manager_id)
-VALUES('Jake', 'Lau', 4, 7);
-
-INSERT INTO department (department) VALUES ('Salesperson');
 INSERT INTO role (title, salary, department_id ) 
 VALUES ('Salesperson', 65000, 2);
-INSERT INTO employee (first_name, last_name, role_id, manager_id)
-VALUES('Kevin', 'Tupic', 5, 7);
-
-INSERT INTO department (department) VALUES ('Sales');
 INSERT INTO role (title, salary, department_id ) 
-VALUES ('Sales Lead', 135000, 2);
-INSERT INTO employee (first_name, last_name, role_id, manager_id)
-VALUES('Jason', 'Brown', 6);
-
-INSERT INTO department (department) VALUES ('Legal');
+VALUES ('Sales Lead', 125000, 2);
 INSERT INTO role (title, salary, department_id ) 
 VALUES ('Lawyer', 105000, 3);
+INSERT INTO role (title, salary, department_id ) 
+VALUES ('Leal Lead', 135000, 3);
+INSERT INTO role (title, salary, department_id ) 
+VALUES ('Legal Assitant', 65000, 3);
+
+INSERT INTO role (title, salary, department_id ) 
+VALUES ('Software Engineer', 75000, 1);
+INSERT INTO role (title, salary, department_id ) 
+VALUES ('Salesperson', 70000, 2);
+INSERT INTO role (title, salary, department_id ) 
+VALUES ('Legal Assistant', 60000, 3);
+
+INSERT INTO employee (first_name, last_name, role_id, manager_id)
+VALUES('Olivia', 'Park', 1, 3);
+INSERT INTO employee (first_name, last_name, role_id, manager_id)
+VALUES('Chris', 'Brown', 2, 3);
+INSERT INTO employee (first_name, last_name, role_id)
+VALUES('David', 'Allen', 3);
+INSERT INTO employee (first_name, last_name, role_id, manager_id)
+VALUES('Jake', 'Lau', 4, 6);
+INSERT INTO employee (first_name, last_name, role_id, manager_id)
+VALUES('Kevin', 'Tupic', 5, 6);
+INSERT INTO employee (first_name, last_name, role_id)
+VALUES('Jason', 'Brown', 6);
 INSERT INTO employee (first_name, last_name, role_id, manager_id)
 VALUES('Ashley', 'Judd', 7, 8);
-
-INSERT INTO department (name) VALUES ('Robert Rodrigez');
-INSERT INTO role (title, salary, department_id ) 
-VALUES ('Leal Lead', 235000, 3);
 INSERT INTO employee (first_name, last_name, role_id)
 VALUES('Robert', 'Rodrigez', 8);
-
-INSERT INTO department (department) VALUES ('Sales');
-INSERT INTO role (title, salary, department_id ) 
-VALUES ('Salesperson', 65000, 2);
-INSERT INTO employee (first_name, last_name, role_id)
-VALUES('John', 'Jake', 10);
-
-UPDATE employee set manager = 'David Allen' WHERE manager_id =3;
-UPDATE employee set manager = 'Ashley Judd' WHERE manager_id =7;
-UPDATE employee set manager = 'Robert Rodrigez' WHERE manager_id =8;
+INSERT INTO employee (first_name, last_name, role_id,manager_id)
+VALUES('John', 'Jake', 9, 8);
+INSERT INTO employee (first_name, last_name, role_id, manager_id)
+VALUES('Kim', 'Caroll', 10, 3);
+INSERT INTO employee (first_name, last_name, role_id, manager_id)
+VALUES('Tim', 'Alex', 11, 6);
+INSERT INTO employee (first_name, last_name, role_id,manager_id)
+VALUES('Emma', 'Thompson', 12, 8);
 
 
 -- readAll employee
@@ -132,3 +129,9 @@ SELECT SUM(salary) AS SalesBudget FROM role WHERE department_id=2;
 SELECT SUM(salary) AS LegalBudget FROM role WHERE department_id=3;
 
 
+TRUNCATE TABLE department; 
+TRUNCATE TABLE role;
+TRUNCATE TABLE employee; 
+
+SELECT e.*, CONCAT (m.first_name, ' ', m.last_name) AS manager FROM employee AS e
+LEFT JOIN employee AS m ON e.manager_id = m.id;
