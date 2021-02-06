@@ -1,5 +1,6 @@
 const mysql = require('mysql');
 const inquirer = require('inquirer');
+const util = require('util')
 
 const connection = mysql.createConnection({
     host: 'localhost',
@@ -131,46 +132,46 @@ const readAllManager = () => {
 }
 
 const addEmployee = () => {
+    let rollArry = []
     connection.query('SELECT id , title FROM role', (err, results) => {
         if (err) throw err
-        let rollArry = []
-        results.filter(element => {
+        
+            results.filter(element => {
             if (rollArry.includes(element.title)) {
                 return false;
             }
             rollArry.push(element.title)
             return true
 
-        })
+             })
         connection.query('SELECT manager_id,id,first_name,last_name FROM employee', (err, results) => {
+        
             if (err) throw err
             let managerArry = []
            
-             results.filter(element=>{
+                 results.forEach(element=>{
                   if(element.manager_id === null){
                       managerArry.push(`${element.first_name} ${element.last_name}`)
                   }
-                  else if(element.manager_id){
-                      if(managerArry.includes(null)){
-                          return false
-                      }
-                        managerArry.push(null)
+                  else if(IndexOf(element.id) < 0){
+                        managerArry.push({name:"None",
+                                          value:null})
                         return true
                      }
             })
             console.log(managerArry)
 
-            let managerIdArry =[]
-            results.filter(element=>{
-                let managerId = element.manager_id
+            // let managerIdArry =[]
+            // results.filter(element=>{
+            //     let managerId = element.manager_id
                
-                if(managerIdArry.includes(managerId))
-                    {return false}
-                managerIdArry.push(managerId)
-                return true
+            //     if(managerIdArry.includes())
+            //         {return false}
+            //        managerIdArry.push(managerId)
+            //         return true
             
-            })
-            console.log(managerIdArry)
+            // })
+            // console.log(managerIdArry)
             inquirer.prompt([
                 {
                     name: "firstName",
@@ -194,15 +195,13 @@ const addEmployee = () => {
                     type: "list",
                     choices: managerArry
                 },
-
                 {
                     name: "managerId",
                     message: "What is your manager ID?",
-                    type: "list",
-                    choices: managerIdArry
+                    type: "input"
+                    // choices: managerIdArry
                  
                 },
-
                 {
                     name: "roleId",
                     message: "Who is employee's role ID?",
@@ -210,11 +209,8 @@ const addEmployee = () => {
                 }
 
 
-
             ]).then(answer => {
                 connection.query("INSERT INTO employee SET ?",
-
-
                     {
                         first_name: answer.firstName,
                         last_name: answer.lastName,
@@ -234,7 +230,6 @@ const addEmployee = () => {
 
  }      
  
-
 const removeEmployee = () =>{
 
     connection.query('SELECT * FROM employee',(err, results)=>{
@@ -270,9 +265,6 @@ const removeEmployee = () =>{
  })
 
 }
-
-
-
 
 
 const updateEmployeeRole = () => {
