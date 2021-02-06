@@ -247,33 +247,30 @@ const updateEmployeeRole = () => {
 
     connection.query('SELECT * FROM employee',(err, results)=>{
             if(err) throw err                         
-          let nameArry = results.map(element=> element.first_name +" "+element.last_name)
-           
-          let idArry = results.map(element=>element.id) 
+
+        let nameArry =   results.map(element=>({name:`${element.first_name}`, 
+        value:element.id}))
+        console.log(nameArry)
        
 
        connection.query('SELECT * FROM role', (err, results)=>{
             if(err) throw err
-            let rollArry = []
-            results.filter(element => {
-            if (rollArry.includes(element.title)) {
-                return false;
-            }
-            rollArry.push(element.title)
-            return true
+         
+           let rollArry = results.map(element => { 
+               return {
+                name: `${element.title}`,
+                value: {
+                    title:element.title,
+                    department_id: element.department_id,
+                    salary: element.salary        
+  
+                }
+               }
 
-             })
-            
-        //      let departmentIdArry = []
-        //       results.forEach(element =>{
-        //         if(departmentIdArry.includes(element.department_id)){
-        //             return false
-        //         }
-        //         departmentIdArry.push(element.department_id)
-        //              return true        
-            
-        //       })
-        // console.log(departmentIdArry)
+           })
+           console.log(rollArry)
+
+ 
     inquirer.prompt([
     {
         name: "name",
@@ -283,40 +280,21 @@ const updateEmployeeRole = () => {
 
     },
     {
-        name: "id",
-        type: "list",
-        message: "Please choose employee id",
-        choices: idArry
-
-    },
-    {
         name: "title",
         type: "list",
         message: "Please choose new title for employee",
         choices: rollArry
 
-    },
-    {
-        name: "salary",
-        type: "input",
-        message: "Please enter new salary"   
-
-    },
-
-    {
-        name: "department_id",
-        type: "list",
-        message: "Please choose new department id",
-        choices: [1,2,3,4]
-
     }
 
-]).then(answer =>{  
-    connection.query('UPDATE role SET ? WHERE?',
-        [{
-            title: answer.title,
-            salary: answer.salary,
-            department_id: answer.department_id,
+
+]).then(answer =>{ 
+    console.log(answer) 
+    connection.query('UPDATE role SET ? WHERE ?',
+        [{  id: answer.name,
+            title: answer.title.title,
+            salary: answer.title.salary,
+            department_id: answer.title.department_id,
         },
 
         { id: answer.id }], (err) => {
