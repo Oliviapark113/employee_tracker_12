@@ -131,20 +131,19 @@ const readAllManager = () => {
     })
 }
 
+
+
 const addEmployee = () => {
-    let rollArry = []
-    connection.query('SELECT id , title FROM role', (err, results) => {
+
+    connection.query('SELECT distinct title , department_id FROM role;', (err, results) => {
         if (err) throw err
         
-            results.filter(element => {
-            if (rollArry.includes(element.title)) {
-                return false;
-            }
-            rollArry.push(element.title)
-            return true
 
-             })
-        connection.query('SELECT manager_id,id,first_name,last_name FROM employee', (err, results) => {
+         let rollArry =   results.map(element=>({name:`${element.title}`, 
+            value:element.department_id}))
+            console.log(rollArry)
+
+        connection.query('SELECT * FROM employee', (err, results) => {
         
             if (err) throw err
             let managerArry = []
@@ -155,24 +154,13 @@ const addEmployee = () => {
 
             results.forEach(element => {
                 if (element.manager_id === null) {
-                    managerArry.push(`${element.first_name} ${element.last_name}`)
+                    managerArry.push({name:`${element.first_name} ${element.last_name}`, 
+                                     value:element.id})
                 }
             })
-          
-           
-            console.log(managerArry)
 
-            let managerIdArry =[]
-            results.forEach(element=>{
-                let managerId = element.manager_id
-               
-                if(managerIdArry.includes(managerId))
-                    {return false}
-                   managerIdArry.push(managerId)
-                    return true
-            
-            })
-            console.log(managerIdArry)
+            console.log(managerArry)
+ 
             inquirer.prompt([
                 {
                     name: "firstName",
@@ -195,28 +183,16 @@ const addEmployee = () => {
                     message: "Who is employee's manager?",
                     type: "list",
                     choices: managerArry
-                },
-                {
-                    name: "managerId",
-                    message: "What is your manager ID?",
-                    type: "input"
-                    // choices: managerIdArry
-                 
-                },
-                {
-                    name: "roleId",
-                    message: "Who is employee's role ID?",
-                    type: "input"
                 }
-
-
+         
             ]).then(answer => {
+                console.log(answer)
                 connection.query("INSERT INTO employee SET ?",
                     {
                         first_name: answer.firstName,
                         last_name: answer.lastName,
-                        role_id: answer.roleId,
-                        manager_id: answer.managerId
+                        role_id: answer.title,
+                        manager_id: answer.manager
 
                     }, (err) => {
                         if (err) throw err
@@ -267,42 +243,57 @@ const removeEmployee = () =>{
 
 }
 
-
 const updateEmployeeRole = () => {
 
-connection.query('SELECT * FROM employee',(err, results)=>{
+    connection.query('SELECT * FROM employee',(err, results)=>{
             if(err) throw err                         
-          let employeeArry = results.map(result=>{
-            console.log(result.first_name +" "+result.last_name, result.id)
+          let nameArry = results.map(element=> element.first_name +" "+element.last_name)
+           
+          let idArry = results.map(element=>element.id) 
+       
 
-              return {name: result.first_name +" "+result.last_name,
-               id: result.id}
+       connection.query('SELECT * FROM role', (err, results)=>{
+            if(err) throw err
+            let rollArry = []
+            results.filter(element => {
+            if (rollArry.includes(element.title)) {
+                return false;
+            }
+            rollArry.push(element.title)
+            return true
 
-           })
-             console.log(employeeArry)              
-
-
-inquirer.prompt([
+             })
+            
+        //      let departmentIdArry = []
+        //       results.forEach(element =>{
+        //         if(departmentIdArry.includes(element.department_id)){
+        //             return false
+        //         }
+        //         departmentIdArry.push(element.department_id)
+        //              return true        
+            
+        //       })
+        // console.log(departmentIdArry)
+    inquirer.prompt([
     {
         name: "name",
         type: "list",
         message: "Please choose employee name you would like to update",
-        choices: employeeArry
+        choices: nameArry
 
     },
-
     {
         name: "id",
-        type: "input",
+        type: "list",
         message: "Please choose employee id",
+        choices: idArry
 
     },
     {
         name: "title",
         type: "list",
         message: "Please choose new title for employee",
-        choices: ['Sales Lead', 'Salesperson', 'Software Engineer',
-            'Lead Engineer', 'Lawyer', 'Legal Lead','Legal Assistant']
+        choices: rollArry
 
     },
     {
@@ -316,29 +307,29 @@ inquirer.prompt([
         name: "department_id",
         type: "list",
         message: "Please choose new department id",
-        choices: [1, 2, 3]
+        choices: [1,2,3,4]
 
     }
 
-]).then(answer =>{
-  
-    connection.query('UPDATE role SET ? WHERE?', 
-        [{  title: answer.title,
+]).then(answer =>{  
+    connection.query('UPDATE role SET ? WHERE?',
+        [{
+            title: answer.title,
             salary: answer.salary,
-             department_id: answer.department_id,
-           },
+            department_id: answer.department_id,
+        },
 
-            { id: answer.id }], (err) => {
-                if (err) throw err
-                readAllRoles()
-                intro()
+        { id: answer.id }], (err) => {
+            if (err) throw err
+            readAllRoles()
+            intro()
+          })
+
         })
 
      })
 
   })
-      
-
 }
 
 

@@ -20,7 +20,9 @@ title VARCHAR(30) NOT NULL,
 salary DECIMAL(10,2) NOT NULL,
 -- INT to hold reference to department role belongs to
 department_id INT(10),
-FOREIGN KEY (department_id) REFERENCES department(id),
+INDEX dep_ind (department_id),
+CONSTRAINT fk_department
+FOREIGN KEY (department_id) REFERENCES department(id)ON DELETE CASCADE,
 PRIMARY KEY (id)
 );
 
@@ -29,13 +31,17 @@ CREATE TABLE employee(
   id INT NOT NULL AUTO_INCREMENT,
   first_name VARCHAR (30) NOT NULL,
   last_name VARCHAR (30) NOT NULL,
-  role_id INT(10),
+  role_id INT (10) NOT NULL,
+  INDEX role_ind(role_id),
 -- INT to hold reference to role employee has 
-  FOREIGN KEY (role_id) REFERENCES role(id),
+  CONSTRAINT fk_role FOREIGN KEY (role_id) REFERENCES role(id) 
+  ON DELETE CASCADE,
 -- INT to hold reference to another employee that manages the employee being Created. 
 -- This field may be null if the employee has no manager
   manager_id INT(10),
-  FOREIGN KEY(role_id) REFERENCES employee(id),
+  INDEX man_ind (manager_id),
+  CONSTRAINT fk_manager 
+  FOREIGN KEY(manager_id) REFERENCES employee(id) ON DELETE SET NULL,
   PRIMARY KEY (id)
   
 );
@@ -79,18 +85,18 @@ INSERT INTO employee (first_name, last_name, role_id, manager_id)
 VALUES('Olivia', 'Park', 1, 3);
 INSERT INTO employee (first_name, last_name, role_id, manager_id)
 VALUES('Chris', 'Brown', 2, 3);
-INSERT INTO employee (first_name, last_name, role_id)
-VALUES('David', 'Allen', 3);
+INSERT INTO employee (first_name, last_name, role_id, manager_id)
+VALUES('David', 'Allen', 3, NULL);
 INSERT INTO employee (first_name, last_name, role_id, manager_id)
 VALUES('Jake', 'Lau', 4, 6);
 INSERT INTO employee (first_name, last_name, role_id, manager_id)
 VALUES('Kevin', 'Tupic', 5, 6);
-INSERT INTO employee (first_name, last_name, role_id)
-VALUES('Jason', 'Brown', 6);
+INSERT INTO employee (first_name, last_name, role_id , manager_id)
+VALUES('Jason', 'Brown', 6, NULL);
 INSERT INTO employee (first_name, last_name, role_id, manager_id)
 VALUES('Ashley', 'Judd', 7, 8);
-INSERT INTO employee (first_name, last_name, role_id)
-VALUES('Robert', 'Rodrigez', 8);
+INSERT INTO employee (first_name, last_name, role_id, manager_id)
+VALUES('Robert', 'Rodrigez', 8, NULL);
 INSERT INTO employee (first_name, last_name, role_id,manager_id)
 VALUES('John', 'Jake', 9, 8);
 INSERT INTO employee (first_name, last_name, role_id, manager_id)
@@ -101,8 +107,8 @@ INSERT INTO employee (first_name, last_name, role_id,manager_id)
 VALUES('Emma', 'Thompson', 12, 8);
 INSERT INTO employee (first_name, last_name, role_id,manager_id)
 VALUES('Mike', 'Troy', 13, 14);
-INSERT INTO employee (first_name, last_name, role_id)
-VALUES('Peter', 'Maxwell', 14);
+INSERT INTO employee (first_name, last_name, role_id, manager_id)
+VALUES('Peter', 'Maxwell', 14, NULL);
 
 
 -- readAll employee
@@ -150,5 +156,6 @@ DROP TABLE employee;
 SELECT e.*, CONCAT (m.first_name, ' ', m.last_name) AS manager FROM employee AS e
 LEFT JOIN employee AS m ON e.manager_id = m.id;
 
-UPDATE role SET title ='Legal Lead' WHERE id=8;
-UPDATE role SET title ='Legal Assistant' WHERE id=9;
+-- ALTER TABLE role
+-- ADD CONSTRAINT FK_PersonOrder
+-- FOREIGN KEY (department_id) REFERENCES department(id);
