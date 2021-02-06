@@ -148,30 +148,31 @@ const addEmployee = () => {
         
             if (err) throw err
             let managerArry = []
-           
-                 results.forEach(element=>{
-                  if(element.manager_id === null){
-                      managerArry.push(`${element.first_name} ${element.last_name}`)
-                  }
-                  else if(IndexOf(element.id) < 0){
-                        managerArry.push({name:"None",
-                                          value:null})
-                        return true
-                     }
+            managerArry.push({
+                name: "None",
+                value: null
             })
+
+            results.forEach(element => {
+                if (element.manager_id === null) {
+                    managerArry.push(`${element.first_name} ${element.last_name}`)
+                }
+            })
+          
+           
             console.log(managerArry)
 
-            // let managerIdArry =[]
-            // results.filter(element=>{
-            //     let managerId = element.manager_id
+            let managerIdArry =[]
+            results.forEach(element=>{
+                let managerId = element.manager_id
                
-            //     if(managerIdArry.includes())
-            //         {return false}
-            //        managerIdArry.push(managerId)
-            //         return true
+                if(managerIdArry.includes(managerId))
+                    {return false}
+                   managerIdArry.push(managerId)
+                    return true
             
-            // })
-            // console.log(managerIdArry)
+            })
+            console.log(managerIdArry)
             inquirer.prompt([
                 {
                     name: "firstName",
