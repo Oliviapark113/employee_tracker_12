@@ -205,28 +205,26 @@ const addEmployee = () => {
                             readEmployeeInfo ()
                             intro()
 
-                        })                   
-   
+                        })                      
     
-        })
+           })
         
-    })
+       })
 
- }  
- 
+    }  
+
 
 const removeEmployee = () =>{
 
     connection.query('SELECT * FROM employee',(err, results)=>{
         if(err) throw err 
         let nameArry = results.map(element=>(
-            { 
+             { 
               name:`${element.first_name} ${element.last_name}`, 
               value:element.id 
               } 
-           )
-        ) 
-        console.log(nameArry)                    
+             )
+           )              
  
         inquirer.prompt([{ 
         name: "id",
@@ -296,17 +294,14 @@ const updateEmployeeRole = () => {
              ])
 
             )
-            // console.log(nameId)
-            // console.log(roleId)
- 
-            connection.query('UPDATE employee  SET role_id =? WHERE id=? ',
+
+            connection.query('UPDATE employee  SET ? WHERE ? ',
                     [
                     {role_id:roleId.roleId},
                     {id:nameId.name}
                     ]
                     ,(err) => {
                         if (err) throw err
-                        // readAllRoles()
                         intro()
                     })  
 
@@ -326,30 +321,37 @@ const readAllRoles = () => {
 
 }
 
+
 const readBudget = () => {
-    inquirer.prompt([{
-        name: 'budget',
-        type: 'list',
-        choices: ['Engineering', 'Sales', 'Legal'],
-        message: 'Please select department that you would like to see Budget'
-    },
 
-    {
-        name: 'id',
-        type: 'input',
-        message: 'Please enter department id to view Budget'
-    },
-    ]).then(answer => {
-        let queryByBudget = 'SELECT SUM(salary) FROM role WHERE ?;'
-        connection.query(queryByBudget, { department_id: answer.id }, (err, result) => {
-            if (err) throw err
-            console.table(result)
-            intro()
+        connection.query('SELECT * FROM DEPARTMENT', (err, results)=>{
+                    if(err) throw(err)
 
+                     let departmentArry = results.map(element =>(
+                        { name: element.department,
+                        value: element.id
+                        }
+                    )   
+                 )
+
+                inquirer.prompt([{
+                    name: 'budget',
+                    type: 'list',
+                    message: 'Please select department that you would like to see Budget',
+                    choices: departmentArry
+                    }]).then(answer =>{
+                    console.log(answer)
+                      connection.query('SELECT SUM(salary) FROM role WHERE ?',[{department_id:answer.budget}],
+                            (err, results)=>{
+                                if(err) throw err
+                                console.table(results)
+                                intro()
+
+                      })               
+                
+                })      
+        
         })
-
-
-    })
 
 
 }
