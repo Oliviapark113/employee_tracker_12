@@ -65,7 +65,7 @@ const intro = () => {
                 break;
 
             case choices[6]:
-                updateEmployee();
+                updateEmployeeRole();
                 break;
 
             case choices[7]:
@@ -132,20 +132,10 @@ const readAllManager = () => {
 }
 
 
-
 const addEmployee = () => {
 
-    connection.query('SELECT distinct title , department_id FROM role;', (err, results) => {
-        if (err) throw err
-        
-
-         let rollArry =   results.map(element=>({name:`${element.title}`, 
-            value:element.department_id}))
-            console.log(rollArry)
-
-        connection.query('SELECT * FROM employee', (err, results) => {
-        
-            if (err) throw err
+    connection.query('SELECT * FROM employee', async (err, results) => {
+              if (err) throw err
             let managerArry = []
             managerArry.push({
                 name: "None",
@@ -156,12 +146,11 @@ const addEmployee = () => {
                 if (element.manager_id === null) {
                     managerArry.push({name:`${element.first_name} ${element.last_name}`, 
                                      value:element.id})
-                }
+                 }
             })
-
-            console.log(managerArry)
  
-            inquirer.prompt([
+           const getPersonInfo = await inquirer.prompt
+           ([
                 {
                     name: "firstName",
                     type: "input",
@@ -172,59 +161,78 @@ const addEmployee = () => {
                     type: "input",
                     message: "What employee's last name?"
                 },
-                {
-                    name: "title",
-                    type: "list",
-                    message: "What is employee\'s role",
-                    choices: rollArry
-                },
+
                 {
                     name: "manager",
                     message: "Who is employee's manager?",
                     type: "list",
                     choices: managerArry
                 }
-         
-            ]).then(answer => {
-                console.log(answer)
-                connection.query("INSERT INTO employee SET ?",
-                    {
-                        first_name: answer.firstName,
-                        last_name: answer.lastName,
-                        role_id: answer.title,
-                        manager_id: answer.manager
+           ])
 
-                    }, (err) => {
-                        if (err) throw err
-                        readEmployeeInfo();
-                        intro();
-                    })
-            })
+     
+           connection.query('SELECT distinct title , id FROM role;', async (err, results) => {
+                   if (err) throw err
+
+                let rollArry =   results.map(element=>(
+                                       {name:`${element.title}`, 
+                                       value:element.id})
+                                       )
+    
+
+                     const getRole =  await inquirer.prompt([
+                            {
+                                name: "role",
+                                type: "list",
+                                message: "What is employee\'s role",
+                                choices: rollArry
+                            }
+
+                        ]) 
+                        console.log(getPersonInfo)
+                        console.log(getRole)
+
+
+                connection.query("INSERT INTO employee SET ?",
+                        {
+                            first_name: getPersonInfo.firstName,
+                            last_name: getPersonInfo.lastName,
+                            role_id: getRole.role,
+                            manager_id: getPersonInfo.manager
+    
+                        }, (err) => {
+                            if (err) throw err
+                            readEmployeeInfo ()
+                            intro()
+
+                        })                   
+   
     
         })
         
     })
 
- }      
+ }  
  
+
 const removeEmployee = () =>{
 
     connection.query('SELECT * FROM employee',(err, results)=>{
-        if(err) throw err                         
-        let employeeArry = results.map(result=>{
-          console.log(result.first_name +" "+result.last_name, result.id)
-    
-            return {name: result.first_name +" "+result.last_name,
-             value: result.id}
-    
-         })
-           console.log(employeeArry) 
-
+        if(err) throw err 
+        let nameArry = results.map(element=>(
+            { 
+              name:`${element.first_name} ${element.last_name}`, 
+              value:element.id 
+              } 
+           )
+        ) 
+        console.log(nameArry)                    
+ 
         inquirer.prompt([{ 
         name: "id",
         type: "list",
         message: "Please choose employee name you would like to remove",
-        choices: employeeArry
+        choices: nameArry
         }     
       ]).then(answer=>{
           console.log(answer)
@@ -237,18 +245,19 @@ const removeEmployee = () =>{
                 intro();
             })
 
-      })          
+         })          
     
  })
 
 }
 
-const updateEmployee = () => {
+
+const updateEmployeeRole = () => {
 
     connection.query('SELECT * FROM employee', async(err, results)=>{
             if(err) throw err                         
 
-        let nameArry =   results.map(element=>(
+        let nameArry = results.map(element=>(
             { 
               name:`${element.first_name} ${element.last_name}`, 
               value:element.id 
@@ -256,53 +265,54 @@ const updateEmployee = () => {
            )
         )
         const nameId = await (inquirer.prompt([
-            {
+              {
                 name: "name",
                 type: "list",
                 message: "Please choose employee name you would like to update",
-                choices: nameArry
-                
-            }])
+                choices: nameArry 
+             }
+         ])
 
         )
        
-
-       connection.query('SELECT title , id FROM role;', async(err, results)=>{
-            if(err) throw err
+           connection.query('SELECT title , id FROM role;', async(err, results)=>{
+                 if(err) throw err
          
-           let rollArry = results.map(element => (
-             {
+                  let rollArry = results.map(element => (
+                 {
                 name: element.title,
                 value: element.id
-                    // salary: element.salary        
                 }
            ))
-          
  
+            const roleId = await(inquirer.prompt([
+                 {
+                  name: "roleId",
+                  type: "list",
+                  message: "Please choose new title for employee",
+                  choices: rollArry
+                  }
+
+             ])
+
+            )
+            // console.log(nameId)
+            // console.log(roleId)
  
-   const roleId = await(inquirer.prompt([
-        {
-        name: "title",
-        type: "list",
-        message: "Please choose new title for employee",
-        choices: rollArry
-
-    }])
-
-   )
-   console.log(nameId)
-   console.log(roleId)
-
-    connection.query('UPDATE employee  SET role_id =? WHERE id=? ',
-        [{role_id:roleId.title},{id:nameId.name}], (err) => {
-            if (err) throw err
-            readEmployeeInfo();
-            intro()
-          })  
+            connection.query('UPDATE employee  SET role_id =? WHERE id=? ',
+                    [
+                    {role_id:roleId.roleId},
+                    {id:nameId.name}
+                    ]
+                    ,(err) => {
+                        if (err) throw err
+                        // readAllRoles()
+                        intro()
+                    })  
 
      })
 
-  })
+   })
 }
 
 
