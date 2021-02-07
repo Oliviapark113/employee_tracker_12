@@ -291,7 +291,7 @@ const updateEmployeeRole = () => {
 ]).then(answer =>{ 
     console.log(answer) 
     connection.query('UPDATE role SET ? WHERE ?',
-        [{  id: answer.name,
+        [{  id: answer.value,
             title: answer.title.title,
             salary: answer.title.salary,
             department_id: answer.title.department_id,
