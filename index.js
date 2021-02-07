@@ -65,7 +65,7 @@ const intro = () => {
                 break;
 
             case choices[6]:
-                updateEmployeeRole();
+                updateEmployee();
                 break;
 
             case choices[7]:
@@ -123,7 +123,7 @@ const readAllEmployeeByDept = () => {
 }
 
 const readAllManager = () => {
-    let queryByManager = 'SELECT  FROM employee WHERE  manager_id IS null;'
+    let queryByManager = 'SELECT * FROM employee WHERE  manager_id IS null;'
     connection.query(queryByManager, (err, results) => {
         if (err) throw err
         console.table(results)
@@ -243,69 +243,62 @@ const removeEmployee = () =>{
 
 }
 
-const updateEmployeeRole = () => {
+const updateEmployee = () => {
 
-    connection.query('SELECT * FROM employee',(err, results)=>{
+    connection.query('SELECT * FROM employee', async(err, results)=>{
             if(err) throw err                         
 
         let nameArry =   results.map(element=>(
-            {name:`${element.first_name}`, 
-             value:element.id} 
+            { 
+              name:`${element.first_name} ${element.last_name}`, 
+              value:element.id 
+              } 
            )
         )
-        console.log(nameArry)
+        const nameId = await (inquirer.prompt([
+            {
+                name: "name",
+                type: "list",
+                message: "Please choose employee name you would like to update",
+                choices: nameArry
+                
+            }])
+
+        )
        
 
-       connection.query('SELECT * FROM role', (err, results)=>{
+       connection.query('SELECT title , id FROM role;', async(err, results)=>{
             if(err) throw err
          
-           let rollArry = results.map(element => { 
-               return {
-                name: `${element.title}`,
-                value: {
-                    department_id: element.department_id,
-                    salary: element.salary        
-  
+           let rollArry = results.map(element => (
+             {
+                name: element.title,
+                value: element.id
+                    // salary: element.salary        
                 }
-               }
-
-           })
-           console.log(rollArry)
-
+           ))
+          
  
-    inquirer.prompt([
-    {
-        name: "name",
-        type: "list",
-        message: "Please choose employee name you would like to update",
-        choices: nameArry
-
-    },
-    {
+ 
+   const roleId = await(inquirer.prompt([
+        {
         name: "title",
         type: "list",
         message: "Please choose new title for employee",
         choices: rollArry
 
-    }
+    }])
 
+   )
+   console.log(nameId)
+   console.log(roleId)
 
-]).then(answer =>{ 
-    console.log(answer) 
-    connection.query('UPDATE role SET ? WHERE ?',
-        [{   id:answer.value,
-            title: answer.title.title,
-            salary: answer.title.salary,
-            department_id: answer.title.department_id,
-        },
-
-        { id: answer.value }], (err) => {
+    connection.query('UPDATE employee  SET role_id =? WHERE id=? ',
+        [{role_id:roleId.title},{id:nameId.name}], (err) => {
             if (err) throw err
-            readAllRoles()
+            readEmployeeInfo();
             intro()
-          })
-
-        })
+          })  
 
      })
 
