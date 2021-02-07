@@ -31,7 +31,7 @@ So that I can organize and plan my business
 
 ## Contributing:
 
-Triology and North Western Bootcamp provide the front end material (db.json, index.js, styles.css, index.html, notes.html )
+Triology and North Western Bootcamp provide the start material 
 
  ## Credits:
 
