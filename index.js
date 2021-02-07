@@ -248,8 +248,11 @@ const updateEmployeeRole = () => {
     connection.query('SELECT * FROM employee',(err, results)=>{
             if(err) throw err                         
 
-        let nameArry =   results.map(element=>({name:`${element.first_name}`, 
-        value:element.id}))
+        let nameArry =   results.map(element=>(
+            {name:`${element.first_name}`, 
+             value:element.id} 
+           )
+        )
         console.log(nameArry)
        
 
@@ -260,7 +263,6 @@ const updateEmployeeRole = () => {
                return {
                 name: `${element.title}`,
                 value: {
-                    title:element.title,
                     department_id: element.department_id,
                     salary: element.salary        
   
@@ -291,7 +293,7 @@ const updateEmployeeRole = () => {
 ]).then(answer =>{ 
     console.log(answer) 
     connection.query('UPDATE role SET ? WHERE ?',
-        [{ 
+        [{   id:answer.value,
             title: answer.title.title,
             salary: answer.title.salary,
             department_id: answer.title.department_id,
